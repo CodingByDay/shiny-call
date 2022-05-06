@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Input;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
+using ShinyCall;
 
 namespace SystemTrayApp.WPF
 {
@@ -16,7 +17,7 @@ namespace SystemTrayApp.WPF
         {
             LoadedCommand = new RelayCommand(Loaded);
             ClosingCommand = new RelayCommand<CancelEventArgs>(Closing);
-            NotifyCommand = new RelayCommand(() => Notify("Some message!"));
+            NotifyCommand = new RelayCommand(() => Notify("Welcome to VOIP service!"));
             NotifyIconOpenCommand = new RelayCommand(() => { WindowState = WindowState.Normal; });
             NotifyIconExitCommand = new RelayCommand(() => { Application.Current.Shutdown(); });
         }
@@ -58,7 +59,22 @@ namespace SystemTrayApp.WPF
                 Text = message,
                 Duration = 1000
             };
+
+
+            // Testing the UI
+
+            Interface ui = new(); 
+            ui.Show();  
         }
+
+        /// <summary>
+        ///  Shows the main interface of the application as seen in Windows 11.
+        /// </summary>
+        private void showInterface()
+        {
+
+        }
+
 
         private void Loaded()
         {
