@@ -16,7 +16,7 @@ namespace SystemTrayApp.WPF
         {
             LoadedCommand = new RelayCommand(Loaded);
             ClosingCommand = new RelayCommand<CancelEventArgs>(Closing);
-            NotifyCommand = new RelayCommand(() => Notify("Hello world!"));
+            NotifyCommand = new RelayCommand(() => Notify("Some message!"));
             NotifyIconOpenCommand = new RelayCommand(() => { WindowState = WindowState.Normal; });
             NotifyIconExitCommand = new RelayCommand(() => { Application.Current.Shutdown(); });
         }
