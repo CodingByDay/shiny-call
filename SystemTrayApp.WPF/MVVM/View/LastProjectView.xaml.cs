@@ -16,16 +16,13 @@ using System.Windows.Shapes;
 namespace ShinyCall.MVVM.View
 {
     /// <summary>
-    /// Interaction logic for HomeView.xaml
+    /// Interaction logic for LastProjectView.xaml
     /// </summary>
-    public partial class HomeView : UserControl
+    public partial class LastProjectView : UserControl
     {
-        public HomeView()
+        public LastProjectView()
         {
             InitializeComponent();
         }
-
-
-
     }
 }

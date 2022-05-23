@@ -7,8 +7,8 @@
         xmlns:local="clr-namespace:SystemTrayApp.WPF"
         mc:Ignorable="d"
         ShowInTaskbar="{Binding ShowInTaskbar}"
-        WindowState="{Binding WindowState}"
-        Title="SystemTrayApp" Height="200" Width="300">
+
+        Title="Shiny call" Height="200" Width="200">
     <Window.DataContext>
         <local:MainWindowViewModel/>
     </Window.DataContext>

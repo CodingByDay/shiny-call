@@ -38,6 +38,12 @@ namespace ShinyCall
             // Code to remove close box from window
             var hwnd = new System.Windows.Interop.WindowInteropHelper(this).Handle;
             SetWindowLong(hwnd, GWL_STYLE, GetWindowLong(hwnd, GWL_STYLE) & ~WS_SYSMENU);
+
+
+
+            var desktopWorkingArea = System.Windows.SystemParameters.WorkArea;
+            this.Left = desktopWorkingArea.Right - this.Width;
+            this.Top = desktopWorkingArea.Bottom - this.Height;
         }
 
         /// <summary>
@@ -50,6 +56,7 @@ namespace ShinyCall
             Loaded += ToolWindow_Loaded;
             var theme = Services.Services.GetTheme();
             SetUpLookAndFeel(theme);
+            
         }
 
         private void SetUpLookAndFeel(string theme)
@@ -57,6 +64,17 @@ namespace ShinyCall
          
         }
 
-        
+   
+
+        private void Window_Deactivated(object sender, EventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
+        }
+
+        private void Window_LostFocus(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
+
+        }
     }
 }

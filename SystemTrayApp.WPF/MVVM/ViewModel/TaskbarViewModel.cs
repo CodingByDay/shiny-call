@@ -7,13 +7,13 @@ using ShinyCall;
 
 namespace SystemTrayApp.WPF
 {
-    public class MainWindowViewModel : ObservableRecipient
+    public class TaskbarViewModel : ObservableRecipient
     {
         private NotifyIconWrapper.NotifyRequestRecord? _notifyRequest;
         private bool _showInTaskbar;
         private WindowState _windowState;
 
-        public MainWindowViewModel()
+        public TaskbarViewModel()
         {
             LoadedCommand = new RelayCommand(Loaded);
             ClosingCommand = new RelayCommand<CancelEventArgs>(Closing);
@@ -62,7 +62,7 @@ namespace SystemTrayApp.WPF
             };
 
 
-            
+
         }
 
         /// <summary>

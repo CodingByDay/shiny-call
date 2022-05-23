@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ShinyCall.MVVM.View"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="225" d:DesignWidth="800">
     <StackPanel>
 
         <TextBlock Text = "Dobrodošli"
@@ -14,10 +14,11 @@
                    HorizontalAlignment="Left"
                    Margin="0,0,0,20" />
 
-        <StackPanel Orientation="Horizontal">
+        <StackPanel Orientation="Horizontal"
+                    Margin="0,0,0,10">
 
-            <Border Width="160"
-                    Height="170"
+            <Border Width="250"
+                    Height="85"
                     
                   >
 
@@ -33,7 +34,7 @@
 
                     <RectangleGeometry RadiusX="10"
                                        RadiusY="10"
-                                       Rect="0,0,160,170"/>
+                                       Rect="0,0,250,85"/>
 
                 </Border.Clip>
                 <Grid>
@@ -41,7 +42,7 @@
                         <TextBlock Text="Številka v vporabi je" 
                                    Foreground="White"
                                    FontSize="9"
-                                   Margin="20, 10, 10, 0"
+                                   Margin="10, 5, 5, 0"
                                    
                                    
                                    
@@ -50,33 +51,21 @@
                         <TextBlock Text="Strežnik je" 
                                    Foreground="White"
                                    FontSize="7"
-                                   Margin="20, 10, 10, 0"
+                                   Margin="10, 5, 5, 0"
                                    
                                    
                                    
                                    />
                     </StackPanel>
-                    <Image Height="64" Width="64"
-                     Source="../../icon.ico" Margin="86,85,10,21"    
+                    <Image Height="16" Width="16"
+                     Source="../../icon.ico" Margin="21,21,2,5"    
                            
                            />
                 </Grid>
             </Border>
 
 
-            <Border Width="160" Height="170" CornerRadius="10" Margin="45,0,0,0">
-
-
-                <Border.Background>
-
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,2">
-                        <GradientStop Color="#ffc554" Offset="0.0" />
-                        <GradientStop Color="#ffb73a" Offset="1" />
-                    </LinearGradientBrush>
-                </Border.Background>
-
-
-            </Border>
+            
 
         </StackPanel>
         
@@ -95,28 +84,28 @@
                    Foreground="White"
                    FontSize="9"
                    HorizontalAlignment="Left"
-                   Margin="0,0,0,20" />
+                   Margin="0,0,0,10" />
 
 
             <StackPanel Orientation="Horizontal">
-                <Border Width="150"
-                        Height="150"
+                <Border Width="75"
+                        Height="75"
                         Background="#844eff"
                         CornerRadius="10" 
                         Margin="0"/>
                 
-                <Border Width="150"
-                        Height="150"
+                <Border Width="75"
+                        Height="75"
                         Background="#4e99ff"
                         CornerRadius="10" />
                 
-                <Border Width="150"
-                        Height="150"
+                <Border Width="75"
+                        Height="75"
                         Background="#4eff91"
                         CornerRadius="10" />
                 
-                <Border Width="150"
-                        Height="150"
+                <Border Width="75"
+                        Height="75"
                         Background="#ecff4e"
                         CornerRadius="10" />
             </StackPanel>

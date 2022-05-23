@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:viewModel="clr-namespace:ShinyCall.MVVM.ViewModel"
              xmlns:view="clr-namespace:ShinyCall.MVVM.View"
-             StartupUri="MainWindow.xaml">
+             StartupUri="Interface.xaml">
     <Application.Resources>
 
         <ResourceDictionary>
@@ -20,8 +20,15 @@
 
 
             </DataTemplate>
-            
-            
+            <DataTemplate DataType="{x:Type viewModel:LastProjectViewModel}">
+
+                <view:LastProjectView />
+
+
+
+
+            </DataTemplate>
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>
