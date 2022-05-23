@@ -3,11 +3,71 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModel="clr-namespace:ShinyCall.MVVM.ViewModel"
         xmlns:local="clr-namespace:ShinyCall"
         mc:Ignorable="d"
         Title="" Height="340" Width="320"
-        WindowStyle="ToolWindow" ResizeMode="CanResizeWithGrip" >
-    <Grid>
+        WindowStyle="None" ResizeMode="NoResize" 
+        Background="Transparent"
+        AllowsTransparency="True" 
         
-    </Grid>
+        >
+    <Window.DataContext>
+        <viewModel:MainViewModel />
+
+    </Window.DataContext>
+        
+    
+    <Border Background="#272537" CornerRadius="10" >
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="70"/>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+
+            <Grid.RowDefinitions>
+                <RowDefinition  Height="35"/>
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+
+            <TextBlock Text="Shiny Call"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Left"
+                       Foreground="White"
+                       FontSize="12" 
+                       Margin="5, 0, 0, 0"   
+             />
+            <StackPanel Grid.Row="1">
+
+                <RadioButton Content="Domov"
+                             Height="30"
+                             Foreground="White"
+                             FontSize="9"
+                             Style="{StaticResource MenuButtonTheme}" 
+                             />
+                <RadioButton Content="Zadnji projekt"
+                             Height="30"
+                             Foreground="White"
+                             FontSize="9"
+                             Style="{StaticResource MenuButtonTheme}"
+                             />
+                <RadioButton Content="Nastavitve"
+                             Height="30"
+                             Foreground="White"
+                             FontSize="9"
+                             Style="{StaticResource MenuButtonTheme}"
+                             />
+            </StackPanel>
+
+
+
+            <ContentControl Grid.Row="1"
+                            Grid.Column="1"
+                            Margin="10"
+                            Content="{Binding CurrentView}"/>
+        </Grid>
+    </Border>  
 </Window>

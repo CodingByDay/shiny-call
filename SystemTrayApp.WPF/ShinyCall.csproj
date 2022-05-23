@@ -33,6 +33,9 @@
   <ItemGroup>
     <Folder Include="Interfaces\" />
     <Folder Include="Classes\" />
+    <Folder Include="Fonts\" />
+    <Folder Include="Images\" />
+    <Folder Include="MVVM\Model\" />
   </ItemGroup>
 
 </Project>

@@ -11,6 +11,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Microsoft.Windows.Themes;
+
+
 
 namespace ShinyCall
 {
@@ -46,8 +49,14 @@ namespace ShinyCall
             InitializeComponent();
             Loaded += ToolWindow_Loaded;
             var theme = Services.Services.GetTheme();
-
-            MessageBox.Show($"The theme is {theme}");
+            SetUpLookAndFeel(theme);
         }
+
+        private void SetUpLookAndFeel(string theme)
+        {
+         
+        }
+
+        
     }
 }
