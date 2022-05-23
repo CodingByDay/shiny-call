@@ -1,0 +1,56 @@
+﻿using Microsoft.Win32;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Management;
+using System.Net.NetworkInformation;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ShinyCall.Services
+{
+    internal static class Services
+    {
+        public static string GetTheme()
+        {
+            string RegistryKey = @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes";
+            string? theme;
+            theme = (string) Registry.GetValue(RegistryKey, "CurrentTheme", string.Empty);
+            theme = theme.Split('\\').Last().Split('.').First().ToString();
+            return theme;
+        }
+
+
+
+
+        // using System.Net.NetworkInformation;
+        public static bool IsMachineUp(string hostName)
+        {
+            bool retVal = false;
+            try
+            {
+                Ping pingSender = new Ping();
+                PingOptions options = new PingOptions();
+                // Use the default Ttl value which is 128,
+                // but change the fragmentation behavior.
+                options.DontFragment = true;
+                // Create a buffer of 32 bytes of data to be transmitted.
+                string data = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+                byte[] buffer = Encoding.ASCII.GetBytes(data);
+                int timeout = 120;
+
+                PingReply reply = pingSender.Send(hostName, timeout, buffer, options);
+                if (reply.Status == IPStatus.Success)
+                {
+                    retVal = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                retVal = false;
+                Console.WriteLine(ex.Message);
+            }
+            return retVal;
+        }
+    }
+}
