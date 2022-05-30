@@ -46,5 +46,101 @@ namespace ShinyCall.Properties {
                 this["server"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string STUNServerHostname {
+            get {
+                return ((string)(this["STUNServerHostname"]));
+            }
+            set {
+                this["STUNServerHostname"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SIPUsername {
+            get {
+                return ((string)(this["SIPUsername"]));
+            }
+            set {
+                this["SIPUsername"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SIPPassword {
+            get {
+                return ((string)(this["SIPPassword"]));
+            }
+            set {
+                this["SIPPassword"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SIPServer {
+            get {
+                return ((string)(this["SIPServer"]));
+            }
+            set {
+                this["SIPServer"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SIPFromName {
+            get {
+                return ((string)(this["SIPFromName"]));
+            }
+            set {
+                this["SIPFromName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string DnsServer {
+            get {
+                return ((string)(this["DnsServer"]));
+            }
+            set {
+                this["DnsServer"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("false")]
+        public string UseAudioScope {
+            get {
+                return ((string)(this["UseAudioScope"]));
+            }
+            set {
+                this["UseAudioScope"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("-1")]
+        public string AudioOutDeviceIndex {
+            get {
+                return ((string)(this["AudioOutDeviceIndex"]));
+            }
+            set {
+                this["AudioOutDeviceIndex"] = value;
+            }
+        }
     }
 }
