@@ -3,12 +3,14 @@ using AsterNET.Manager.Event;
 using SIPSorcery.Media;
 using SIPSorcery.SIP;
 using SIPSorcery.SIP.App;
-
+using ToastNotifications.Messages;
 using SIPSorceryMedia.Windows;
 using System;
 using System.Collections.Generic;
 using System;
-
+using ToastNotifications;
+using ToastNotifications.Lifetime;
+using ToastNotifications.Position;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
@@ -29,6 +31,11 @@ using SIPSorcery.SoftPhone;
 using Microsoft.Data.Sqlite;
 using ShinyCall.Sqlite;
 using ShinyCall.Mappings;
+using ShinyCall.MVVM.ViewModel;
+using System.Xml;
+using Windows.UI.Notifications;
+using ShinyCall.Services;
+using WPFNotification.Services;
 
 namespace SystemTrayApp.WPF
 {
@@ -37,6 +44,9 @@ namespace SystemTrayApp.WPF
     /// </summary>
     public partial class App : Application
     {
+
+        private NotifyIconWrapper.NotifyRequestRecord? _notifyRequest;
+        private MainViewModel context = new MainViewModel();
         private const int SIP_CLIENT_COUNT = 2;                             // The number of SIP clients (simultaneous calls) that the UI can handle.
         private const int ZINDEX_TOP = 10;
         private const int REGISTRATION_EXPIRY = 180;
@@ -148,10 +158,7 @@ namespace SystemTrayApp.WPF
 
         private void SipClient_StatusMessage(SIPClient arg1, string arg2)
         {
-            var ar1 = arg1;
-            var ar2 = arg2;
-
-            var stop = true;
+           
         }
 
         /// <summary>
@@ -204,13 +211,40 @@ namespace SystemTrayApp.WPF
             isMissedCall = true;
            
         }
-       
+
+
+        Notifier notifier = new Notifier(cfg =>
+        {
+            cfg.PositionProvider = new WindowPositionProvider(
+                parentWindow: Application.Current.MainWindow,
+                corner: Corner.TopRight,
+                offsetX: 10,
+                offsetY: 10);
+
+            cfg.LifetimeSupervisor = new TimeAndCountBasedLifetimeSupervisor(
+                notificationLifetime: TimeSpan.FromSeconds(3),
+                maximumNotificationCount: MaximumNotificationCount.FromCount(5));
+
+            cfg.Dispatcher = Application.Current.Dispatcher;
+        });
+
+
         private bool SIPCallIncoming(SIPRequest sipRequest)
         {
             isMissedCall = true;
             var rq = sipRequest;
             caller = sipRequest.Header.From.FriendlyDescription().Split('@')[0]; 
             string nameCaller = $"Incoming call from {sipRequest.Header.From.FriendlyDescription()}.";
+            var message = nameCaller;
+
+            this.Dispatcher.Invoke(() =>
+            {
+                notifier.ShowInformation(nameCaller);
+            });
+        
+
+           
+
             if (!_sipClients[0].IsCallActive)
             {
                 _sipClients[0].Accept(sipRequest);           

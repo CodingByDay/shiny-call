@@ -5,12 +5,21 @@ using System.Linq;
 using System.Management;
 using System.Net.NetworkInformation;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
+using ToastNotifications;
+using ToastNotifications.Lifetime;
+using ToastNotifications.Position;
+using WPFNotification.Model;
+using WPFNotification.Services;
 
 namespace ShinyCall.Services
 {
     internal static class Services
     {
+
+
         public static string GetTheme()
         {
             string RegistryKey = @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes";
@@ -20,7 +29,11 @@ namespace ShinyCall.Services
             return theme;
         }
 
+        public static void Notify(string title, string message)
+        {
 
+            
+        }
 
 
         // using System.Net.NetworkInformation;

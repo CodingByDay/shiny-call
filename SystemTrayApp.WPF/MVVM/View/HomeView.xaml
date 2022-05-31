@@ -12,8 +12,8 @@
                    Foreground="White"
                    FontSize="12"
                    HorizontalAlignment="Left"
-                   Margin="0,0,0,20" />
-
+                   Margin="0,0,0,0" />
+        
         <StackPanel Orientation="Horizontal"
                     Margin="0,0,0,10">
 
@@ -65,10 +65,21 @@
                            />
                 </Grid>
             </Border>
+            <StackPanel Orientation="Vertical">
+                
+                <ListView  Margin="10,0,0,0" 
+                       Name="list_view" 
+                       HorizontalAlignment="Right" 
+                       VerticalAlignment="Top"
+                       Background="#4e99ff"
+                       FontSize="7"
+                       Width="200" Height="85"
+                       VerticalContentAlignment="Top"  
+                       ScrollViewer.VerticalScrollBarVisibility="Visible"
+                       ScrollViewer.CanContentScroll="False">
 
-
-            
-
+                </ListView>
+            </StackPanel>
         </StackPanel>
         
         

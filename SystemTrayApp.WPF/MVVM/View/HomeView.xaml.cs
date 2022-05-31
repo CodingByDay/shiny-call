@@ -56,6 +56,9 @@ namespace ShinyCall.MVVM.View
                 wNumber.Text = $"Telefonska številka je: {ConfigurationManager.AppSettings["SIPPhoneNumber"]}";
                 wServer.Text = $"Server je: {ConfigurationManager.AppSettings["SIPServer"]}";
                 var history = SqliteDataAccess.LoadCalls();
+
+                list_view.ItemsSource = GetListFromModels(history);
+
                 var last_calls = history.Skip(Math.Max(0, history.Count() - 3));
                 if (last_calls.Count() > 0)
                 {
@@ -89,11 +92,28 @@ namespace ShinyCall.MVVM.View
           
             
         }
+
+        private System.Collections.IEnumerable GetListFromModels(List<CallModel> history)
+        {
+            foreach(var call in history)
+            {
+                yield return $"{call.caller}-{call.status}-{call.time}";
+            }
+        }
+
         private void InitializeView()
         {
             UpdateUI();
         }
 
+        private string ReturnStringOrDefaultList(CallModel? value)
+        {
+            if (value != null)
+            {
+                return $"{value.caller}-{value.status}";
+            }
+            return String.Empty;
+        }
 
         private string ReturnStringOrDefault(CallModel? value)
         {

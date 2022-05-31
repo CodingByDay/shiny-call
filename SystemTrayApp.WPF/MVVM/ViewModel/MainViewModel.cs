@@ -103,7 +103,7 @@ namespace ShinyCall.MVVM.ViewModel
             set => SetProperty(ref _notifyRequest, value);
         }
 
-        private void Notify(string message)
+        public void Notify(string message)
         {
             NotifyRequest = new NotifyIconWrapper.NotifyRequestRecord
             {
@@ -111,7 +111,7 @@ namespace ShinyCall.MVVM.ViewModel
                 Text = message,
                 Duration = 1000
             };
-
+            var debug = true;
 
         }
 

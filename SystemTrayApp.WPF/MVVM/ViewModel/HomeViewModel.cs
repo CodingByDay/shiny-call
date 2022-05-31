@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ShinyCall.MVVM.ViewModel
 {
-    internal class HomeViewModel
+    internal class HomeViewModel 
     {
     }
 }
