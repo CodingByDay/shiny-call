@@ -26,6 +26,10 @@ using System.Configuration;
 using System.Net;
 using SIPSorcery.SoftPhone;
 
+using Microsoft.Data.Sqlite;
+using ShinyCall.Sqlite;
+using ShinyCall.Mappings;
+
 namespace SystemTrayApp.WPF
 {
     /// <summary>
@@ -36,8 +40,8 @@ namespace SystemTrayApp.WPF
         private const int SIP_CLIENT_COUNT = 2;                             // The number of SIP clients (simultaneous calls) that the UI can handle.
         private const int ZINDEX_TOP = 10;
         private const int REGISTRATION_EXPIRY = 180;
-
-
+        private string caller = string.Empty;
+        private bool isMissedCall = true;
         private string m_sipUsername = SIPSoftPhoneState.SIPUsername;
         private string m_sipPassword = SIPSoftPhoneState.SIPPassword;
         private string m_sipServer = SIPSoftPhoneState.SIPServer;
@@ -58,34 +62,26 @@ namespace SystemTrayApp.WPF
         //private AudioScope.AudioScopeOpenGL _audioScopeGL1;
         //private AudioScope.AudioScope _onHoldAudioScope;
         //private AudioScope.AudioScopeOpenGL _onHoldAudioScopeGL;
-        int SIP_LISTEN_PORT = 5060;
-        private SIPTransport _sipTransport;
-        private SIPRegistrationUserAgent regUserAgent;
-        private SIPUserAgent agent;
-
-        struct SendSilenceJob
-        {
-            public Timer SendSilenceTimer;
-            public SIPUserAgent UserAgent;
-
-            public SendSilenceJob(Timer timer, SIPUserAgent ua)
-            {
-                SendSilenceTimer = timer;
-                UserAgent = ua;
-            }
-        }
-
 
         public App()
         {
             InitializeComponent();
             BusinessLogic();
 
+            
+
+
+  
+
+       
+         
+
+
         }
 
-        private void BusinessLogic()
-        {
 
+        private async void BusinessLogic()
+        {
             ResetToCallStartState(null);
 
             _sipTransportManager = new SIPTransportManager();
@@ -106,11 +102,11 @@ namespace SystemTrayApp.WPF
             }
 
 
-
-
+            await Initialize();
 
 
         }
+
         private async void OnWindowLoaded(object sender, RoutedEventArgs e)
         {
             await Initialize();
@@ -129,7 +125,9 @@ namespace SystemTrayApp.WPF
 
                 sipClient.CallAnswer += SIPCallAnswered;
                 sipClient.CallEnded += ResetToCallStartState;
-         
+                sipClient.StatusMessage += SipClient_StatusMessage;
+                sipClient.RemotePutOnHold += RemotePutOnHold;
+                sipClient.RemoteTookOffHold += RemoteTookOffHold;
 
                 _sipClients.Add(sipClient);
             }
@@ -143,7 +141,7 @@ namespace SystemTrayApp.WPF
                 listeningEndPoints += (listeningEndPoints == null) ? sipChannelEP.ToString() : $", {sipChannelEP}";
             }
 
-            string msg = $"Listening on: {listeningEndPoints}";
+            string port = $"Listening on: {listeningEndPoints}";
 
             _sipRegistrationClient = new SIPRegistrationUserAgent(
                 _sipTransportManager.SIPTransport,
@@ -153,6 +151,17 @@ namespace SystemTrayApp.WPF
                 REGISTRATION_EXPIRY);
 
             _sipRegistrationClient.Start();
+
+        }
+
+
+
+        private void SipClient_StatusMessage(SIPClient arg1, string arg2)
+        {
+            var ar1 = arg1;
+            var ar2 = arg2;
+
+            var stop = true;
         }
 
         /// <summary>
@@ -172,39 +181,44 @@ namespace SystemTrayApp.WPF
         /// <summary>
         /// Reset the UI elements to their initial state at the end of a call.
         /// </summary>
-        private void ResetToCallStartState(SIPClient sipClient)
+        private async void ResetToCallStartState(SIPClient sipClient)
         {
+            CallModel call = new CallModel();
+            call.caller = caller;
+            call.status = "Missed";
+            call.time = DateTime.Now.ToString();
+            SqliteDataAccess.InsertCallHistory(call);
+
             if (sipClient == null || sipClient == _sipClients[0])
             {
-             
+
             }
 
             if (sipClient == null || sipClient == _sipClients[1])
             {
-            }
-        }
 
-        /// <summary>
-        /// Checks if there is a client that can accept the call and if so sets up the UI
-        /// to present the handling options to the user.
-        /// </summary>
+            }
+
+           
+        }
+       
         private bool SIPCallIncoming(SIPRequest sipRequest)
         {
-            string msg = $"Incoming call from {sipRequest.Header.From.FriendlyDescription()}.";
+            isMissedCall = true;
+            caller = sipRequest.Header.From.FriendlyDescription();
+            string nameCaller = $"Incoming call from {sipRequest.Header.From.FriendlyDescription()}.";
 
             if (!_sipClients[0].IsCallActive)
             {
                 _sipClients[0].Accept(sipRequest);
-
-             
+            
 
                 return true;
             }
             else if (!_sipClients[1].IsCallActive)
             {
                 _sipClients[1].Accept(sipRequest);
-
-             
+          
 
                 return true;
             }
@@ -212,14 +226,23 @@ namespace SystemTrayApp.WPF
             {
                 return false;
             }
+           
         }
 
-        /// <summary>
-        /// Set up the UI to present options for an established SIP call, i.e. hide the cancel 
-        /// button and display they hangup button.
-        /// </summary>
+        private async Task AnswerTest()
+        {
+            if(_sipClients[0]!=null)
+            {
+               await _sipClients[0].Answer();
+            } else
+            {
+               await _sipClients[2].Answer();
+            }
+        }
         private async void SIPCallAnswered(SIPClient client)
         {
+            isMissedCall = false;
+
             if (client == _sipClients[0])
             {
                 if (_sipClients[1].IsCallActive && !_sipClients[1].IsOnHold)
@@ -228,12 +251,11 @@ namespace SystemTrayApp.WPF
                     await _sipClients[1].PutOnHold();
                 }
 
-               
-            
+
             }
             else if (client == _sipClients[1])
             {
-                
+
 
                 if (_sipClients[0].IsCallActive)
                 {
@@ -243,14 +265,18 @@ namespace SystemTrayApp.WPF
                         await _sipClients[0].PutOnHold();
                     }
 
-                  
+
                 }
             }
+            CallModel call = new CallModel();
+            call.caller = caller;
+            call.status = "Answered";
+            call.time = DateTime.Now.ToString();
+            SqliteDataAccess.InsertCallHistory(call);
         }
 
-      
 
-      
+
 
         /// <summary>
         /// Answer an incoming call on the SipClient
@@ -271,121 +297,63 @@ namespace SystemTrayApp.WPF
             }
         }
 
-     
-  
+
+
+
+
         /// <summary>
-        /// Called when the active SIP client has a bitmap representing the remote video stream
-        /// ready.
+        /// The button to initiate an attended transfer request between the two in active calls.
         /// </summary>
-        /// <param name="sample">The bitmap sample in pixel format BGR24.</param>
-        /// <param name="width">The bitmap width.</param>
-        /// <param name="height">The bitmap height.</param>
-        /// <param name="stride">The bitmap stride.</param>
-        private void VideoSampleReady(byte[] sample, uint width, uint height, int stride, VideoPixelFormatsEnum pixelFormat, WriteableBitmap wBmp, System.Windows.Controls.Image dst)
+        private async void AttendedTransferButton_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            if (sample != null && sample.Length > 0)
+            bool wasAccepted = await _sipClients[1].AttendedTransfer(_sipClients[0].Dialogue);
+
+            if (!wasAccepted)
             {
-                this.Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    var bmpPixelFormat = PixelFormats.Bgr24;
-                    switch (pixelFormat)
-                    {
-                        case VideoPixelFormatsEnum.Bgr:
-                            bmpPixelFormat = PixelFormats.Bgr24;
-                            break;
-                        case VideoPixelFormatsEnum.Bgra:
-                            bmpPixelFormat = PixelFormats.Bgra32;
-                            break;
-                        case VideoPixelFormatsEnum.Rgb:
-                            bmpPixelFormat = PixelFormats.Rgb24;
-                            break;
-                        default:
-                            bmpPixelFormat = PixelFormats.Bgr24;
-                            break;
-                    }
-
-                    if (wBmp == null || wBmp.Width != width || wBmp.Height != height)
-                    {
-                        wBmp = new WriteableBitmap(
-                            (int)width,
-                            (int)height,
-                            96,
-                            96,
-                            bmpPixelFormat,
-                            null);
-
-                        dst.Source = wBmp;
-                    }
-
-                    // Reserve the back buffer for updates.
-                    wBmp.Lock();
-
-                    Marshal.Copy(sample, 0, wBmp.BackBuffer, sample.Length);
-
-                    // Specify the area of the bitmap that changed.
-                    wBmp.AddDirtyRect(new Int32Rect(0, 0, (int)width, (int)height));
-
-                    // Release the back buffer and make it available for display.
-                    wBmp.Unlock();
-                }), System.Windows.Threading.DispatcherPriority.Normal);
             }
         }
 
-        
+        /// <summary>
+        /// The remote call party put us on hold.
+        /// </summary>
+        private void RemotePutOnHold(SIPClient sipClient)
+        {
+            // We can't put them on hold if they've already put us on hold.
 
-       
+            if (sipClient == _sipClients[0])
+            {
+
+            }
+            else if (sipClient == _sipClients[1])
+            {
+
+            }
+        }
+
+        /// <summary>
+        /// The remote call party has taken us off hold.
+        /// </summary>
+        private void RemoteTookOffHold(SIPClient sipClient)
+        {
+
+            if (sipClient == _sipClients[0])
+            {
+
+            }
+            else if (sipClient == _sipClients[1])
+            {
+
+            }
+        }
+
+
+
+
 
       
-        
 
-    
-        private void RegUserAgent_RegistrationSuccessful(SIPURI obj)
-        {
-            string message = "Success";
-            int r = 4;
-
-            _sipTransport = new SIPTransport();
-            _sipTransport.AddSIPChannel(new SIPUDPChannel(new IPEndPoint(IPAddress.Any, SIP_LISTEN_PORT)));
-
-            var userAgent = new SIPUserAgent(_sipTransport, null, true);
-   
-            userAgent.OnIncomingCall += async (ua, req) =>
-            {
-                WindowsAudioEndPoint winAudioEP = new WindowsAudioEndPoint(new AudioEncoder());
-                VoIPMediaSession voipMediaSession = new VoIPMediaSession(winAudioEP.ToMediaEndPoints());
-                voipMediaSession.AcceptRtpFromAny = true;
-
-
-                var uas = userAgent.AcceptCall(req);
-                await userAgent.Answer(uas, voipMediaSession);
-            };
-
-
-
-
-        }
-
-        private void RegUserAgent_RegistrationRemoved(SIPURI obj)
-        {
-            string message = "Removed";
-            int r = 4;
-
-        }
-
-        private void RegUserAgent_RegistrationTemporaryFailure(SIPURI arg1, string arg2)
-        {
-            string message = "temporary";
-            int r = 4;
-
-        }
-
-        private void RegUserAgent_RegistrationFailed(SIPURI arg1, string arg2)
-        {
-            string message = "fail";
-                        int r = 4;
-
-        }
     }
     }
+
 
 

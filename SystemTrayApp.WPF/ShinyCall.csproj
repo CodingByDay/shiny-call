@@ -11,13 +11,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="db.db" />
     <None Remove="icon.ico" />
     <None Remove="MVVM\View\icon.ico" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="db.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AsterNET" Version="1.3.0" />
+    <PackageReference Include="Dapper" Version="2.0.123" />
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.3.0" />
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="6.0.5" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1" />
     <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.0.0" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.31" />
@@ -29,6 +38,8 @@
     <PackageReference Include="SIPSorceryMedia.Abstractions" Version="1.2.0" />
     <PackageReference Include="SIPSorceryMedia.Encoders" Version="0.0.10-pre" />
     <PackageReference Include="SIPSorceryMedia.Windows" Version="6.0.3-pre" />
+    <PackageReference Include="SQLite" Version="3.13.0" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.115.5" />
     <PackageReference Include="System.Management" Version="6.0.0" />
   </ItemGroup>
 
