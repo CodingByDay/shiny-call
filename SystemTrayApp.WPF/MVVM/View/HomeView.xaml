@@ -90,26 +90,40 @@
 
 
             <StackPanel Orientation="Horizontal">
-                <Border Width="75"
+                <Border Width="125"
                         Height="75"
                         Background="#844eff"
                         CornerRadius="10" 
-                        Margin="0"/>
-                
-                <Border Width="75"
+                        Margin="0">
+
+                    <TextBlock Width="130" Height="30" Name="first_call" Background="Transparent" TextAlignment="Center"></TextBlock>
+
+
+                </Border>
+
+
+
+
+
+                <Border Width="125"
                         Height="75"
                         Background="#4e99ff"
-                        CornerRadius="10" />
-                
-                <Border Width="75"
+                        CornerRadius="10">
+
+
+
+                    <TextBlock Width="130" Height="30" Name="second_call" Background="Transparent" TextAlignment="Center"></TextBlock>
+                </Border>
+
+                <Border Width="125"
                         Height="75"
                         Background="#4eff91"
-                        CornerRadius="10" />
+                        CornerRadius="10">
+
+                    <TextBlock Width="130" Height="30" Name="third_call" Background="Transparent" TextAlignment="Center"></TextBlock>
+                </Border>
+
                 
-                <Border Width="75"
-                        Height="75"
-                        Background="#ecff4e"
-                        CornerRadius="10" />
             </StackPanel>
 
         </StackPanel>

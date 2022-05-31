@@ -67,16 +67,6 @@ namespace SystemTrayApp.WPF
         {
             InitializeComponent();
             BusinessLogic();
-
-            
-
-
-  
-
-       
-         
-
-
         }
 
 
@@ -153,7 +143,7 @@ namespace SystemTrayApp.WPF
             _sipRegistrationClient.Start();
 
         }
-
+     
 
 
         private void SipClient_StatusMessage(SIPClient arg1, string arg2)
@@ -183,11 +173,24 @@ namespace SystemTrayApp.WPF
         /// </summary>
         private async void ResetToCallStartState(SIPClient sipClient)
         {
-            CallModel call = new CallModel();
-            call.caller = caller;
-            call.status = "Missed";
-            call.time = DateTime.Now.ToString();
-            SqliteDataAccess.InsertCallHistory(call);
+
+            if (!String.IsNullOrEmpty(caller))
+            {
+                CallModel call = new CallModel();
+                call.caller = caller;
+                if (isMissedCall)
+                {
+                    call.status = "Missed";
+                }
+                else
+                {
+                    call.status = "Answered";
+                }
+                call.time = DateTime.Now.ToString();
+                SqliteDataAccess.InsertCallHistory(call);
+                this.InitializeComponent();
+            }
+           
 
             if (sipClient == null || sipClient == _sipClients[0])
             {
@@ -198,35 +201,30 @@ namespace SystemTrayApp.WPF
             {
 
             }
-
+            isMissedCall = true;
            
         }
        
         private bool SIPCallIncoming(SIPRequest sipRequest)
         {
             isMissedCall = true;
-            caller = sipRequest.Header.From.FriendlyDescription();
+            var rq = sipRequest;
+            caller = sipRequest.Header.From.FriendlyDescription().Split('@')[0]; 
             string nameCaller = $"Incoming call from {sipRequest.Header.From.FriendlyDescription()}.";
-
             if (!_sipClients[0].IsCallActive)
             {
-                _sipClients[0].Accept(sipRequest);
-            
-
+                _sipClients[0].Accept(sipRequest);           
                 return true;
             }
             else if (!_sipClients[1].IsCallActive)
             {
-                _sipClients[1].Accept(sipRequest);
-          
-
+                _sipClients[1].Accept(sipRequest);        
                 return true;
             }
             else
             {
                 return false;
-            }
-           
+            }         
         }
 
         private async Task AnswerTest()
@@ -268,16 +266,17 @@ namespace SystemTrayApp.WPF
 
                 }
             }
-            CallModel call = new CallModel();
-            call.caller = caller;
-            call.status = "Answered";
-            call.time = DateTime.Now.ToString();
-            SqliteDataAccess.InsertCallHistory(call);
+            if (!String.IsNullOrEmpty(caller))
+            {
+                CallModel call = new CallModel();
+                call.caller = caller;
+                call.status = "Answered";
+                call.time = DateTime.Now.ToString();
+                SqliteDataAccess.InsertCallHistory(call);
+
+                this.InitializeComponent();
+            }
         }
-
-
-
-
         /// <summary>
         /// Answer an incoming call on the SipClient
         /// </summary>
@@ -335,7 +334,6 @@ namespace SystemTrayApp.WPF
         /// </summary>
         private void RemoteTookOffHold(SIPClient sipClient)
         {
-
             if (sipClient == _sipClients[0])
             {
 
@@ -344,16 +342,9 @@ namespace SystemTrayApp.WPF
             {
 
             }
-        }
-
-
-
-
-
-      
-
+        } 
     }
-    }
+}
 
 
 

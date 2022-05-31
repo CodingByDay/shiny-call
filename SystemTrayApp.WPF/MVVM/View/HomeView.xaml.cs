@@ -1,7 +1,12 @@
-﻿using System;
+﻿using ShinyCall.Mappings;
+using ShinyCall.Sqlite;
+using SIPSorcery.SoftPhone;
+using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -24,12 +29,79 @@ namespace ShinyCall.MVVM.View
         {
             InitializeComponent();
             InitializeView();
+            var task = Task.Run(async () => await RunForever());
         }
 
+
+
+        public async Task RunForever()
+        {
+            await Task.Run(() =>
+            {
+                while(true)
+                {
+                    UpdateUI(); 
+                    Thread.Sleep(2000);
+                }
+            });
+        }
+
+
+        private void UpdateUI()
+        {
+
+            this.Dispatcher.Invoke(new Action(() =>
+            {
+
+                wNumber.Text = $"Telefonska številka je: {ConfigurationManager.AppSettings["SIPPhoneNumber"]}";
+                wServer.Text = $"Server je: {ConfigurationManager.AppSettings["SIPServer"]}";
+                var history = SqliteDataAccess.LoadCalls();
+                var last_calls = history.Skip(Math.Max(0, history.Count() - 3));
+                if (last_calls.Count() > 0)
+                {
+                    try
+                    {
+                        CallModel? first = (CallModel)last_calls.ElementAt(0);
+                        first_call.Text = ReturnStringOrDefault(first);
+
+                    }
+                    catch { }
+                    try
+                    {
+                        CallModel? second = (CallModel)last_calls.ElementAt(1);
+                        second_call.Text = ReturnStringOrDefault(second);
+
+                    }
+                    catch { }
+
+                    try
+                    {
+                        CallModel? third = (CallModel)last_calls.ElementAt(2);
+                        third_call.Text = ReturnStringOrDefault(third);
+
+                    }
+                    catch { }
+
+
+
+                }
+            }));
+          
+            
+        }
         private void InitializeView()
         {
-            wNumber.Text = $"Telefonska številka je: {Properties.Settings.Default.phone}";
-            wServer.Text = $"Server je: {Properties.Settings.Default.server}";
+            UpdateUI();
+        }
+
+
+        private string ReturnStringOrDefault(CallModel? value)
+        {
+            if(value!=null)
+            {
+                return $"{value.caller}\n{value.status}";
+            } 
+            return String.Empty;
         }
     }
 }
