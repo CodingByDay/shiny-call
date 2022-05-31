@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Management;
 using System.Net.NetworkInformation;
@@ -28,13 +29,40 @@ namespace ShinyCall.Services
             theme = theme.Split('\\').Last().Split('.').First().ToString();
             return theme;
         }
-
-        public static void Notify(string title, string message)
+        public static string GetAppSettings(string key)
         {
-
-            
+            try
+            {
+                return ConfigurationManager.AppSettings[key];
+            } catch (Exception)
+            {
+                return string.Empty;
+            }
         }
-
+        public static void AddUpdateAppSettings(string key, string value)
+        {
+            try
+            {
+                System.Configuration.ExeConfigurationFileMap fileMap = new ExeConfigurationFileMap();
+                fileMap.ExeConfigFilename = AppDomain.CurrentDomain.BaseDirectory + "..\\..\\App.config";
+                Configuration configFile = ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);
+                var settings = configFile.AppSettings.Settings;
+                if (settings[key] == null)
+                {
+                    settings.Add(key, value);
+                }
+                else
+                {
+                    settings[key].Value = value;
+                }
+                configFile.Save(ConfigurationSaveMode.Modified);
+                ConfigurationManager.RefreshSection(configFile.AppSettings.SectionInformation.Name);
+            }
+            catch (ConfigurationErrorsException)
+            {
+                // Logging
+            }
+        }
 
         // using System.Net.NetworkInformation;
         public static bool IsMachineUp(string hostName)

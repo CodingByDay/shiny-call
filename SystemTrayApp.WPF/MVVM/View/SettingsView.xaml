@@ -40,45 +40,89 @@
                 <Grid>
               
                   
-                            <Button Height="50" 
-                                    BorderThickness="3"
-                                    IsEnabled="True"
-                                    Margin="10, 5, 5, 10"
-                                    MouseUp="SaveClick"
-                                    Width="50" Click="SaveClick"
-                                     >
-                                <Button.Template>
-                                    <ControlTemplate>
-                                        <Image Source="/MVVM/View/icon.ico"/>
-                                    </ControlTemplate>
-                                </Button.Template>
-                            </Button>
+                            
 
-        
+
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Številka v vporabi je" 
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="Številka v vporabi je" 
                                    Foreground="White"
                                    FontSize="9"
-                                   Margin="10, 5, 5, 10"
+                                   Margin="10, 5, 5, 5"
                                    
                                   >
-                                   
-                                  <TextBox Margin="10, 5, 5, 0" Width="150" Name="phone_number" HorizontalAlignment="Right"/>
 
-                        </TextBlock>
 
-                        <TextBlock Text="Strežnik je" 
+                            </TextBlock>
+
+                            <TextBlock Text="Strežnik je" 
                                    Foreground="White"
                                    FontSize="9"
-                                   Margin="10, 5, 5, 10"
+                                   Margin="10, 5, 5, 5"
                                   >
-                                   
-                                  <TextBox Margin="10, 5, 5, 0"  Width="150" Name="server" HorizontalAlignment="Right" RenderTransformOrigin="1.029,0.512"/>
 
-                        </TextBlock>
-                     
+
+                            </TextBlock>
+                            <TextBlock Text="Geslo je" 
+                                   Foreground="White"
+                                   FontSize="9"
+                                   Margin="10, 5, 5, 5"
+                                  >
+
+
+                            </TextBlock>
+                            <TextBlock Text="Port je" 
+                                   Foreground="White"
+                                   FontSize="9"
+                                   Margin="10, 5, 5, 5"
+                                  >
+
+
+                            </TextBlock>
+                            <TextBlock Text="Prikazano ime je" 
+                                   Foreground="White"
+                                   FontSize="9"
+                                   Margin="10, 5, 5, 0"
+                                  >
+
+
+                            </TextBlock>
+
+                        </StackPanel>
+                        
+                        <StackPanel Orientation="Vertical">
+
+
+                            <TextBox Margin="10, 5, 5, 0" Width="150" Name="phone_number" Background="Beige"  HorizontalAlignment="Right"/>
+
+
+
+
+
+                            <TextBox Margin="10, 5, 5, 0"  Width="150" Name="server" HorizontalAlignment="Right" Background="Beige"  RenderTransformOrigin="1.029,0.512"/>
+
+                                  <TextBox Margin="10, 5, 5, 0"  Width="150" Name="password" HorizontalAlignment="Right" Background="Beige"  RenderTransformOrigin="1.029,0.512"/>
+                            <TextBox Margin="10, 5, 5, 0"  Width="150" Name="port" HorizontalAlignment="Right" Background="Beige"  RenderTransformOrigin="1.029,0.512"/>
+                            <TextBox Margin="10, 5, 5, 0"  Width="150" Name="display_name" HorizontalAlignment="Right" Background="Beige"  RenderTransformOrigin="1.029,0.512"/>
+
+
+                        </StackPanel>
+                        <Button Height="70" 
+                                    BorderThickness="15"
+                                    BorderBrush="Black"
+                                    IsEnabled="True"
+                                    Margin="30, 0, 5, 10"
+                                    MouseUp="SaveClick"
+                                    Width="70" Click="SaveClick"
+                                     >
+                            <Button.Template>
+                                <ControlTemplate>
+                                    <Image Source="/MVVM/View/icon.ico"/>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
                     </StackPanel>
-                   
+
 
                 </Grid>
             </Border>

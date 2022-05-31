@@ -7,7 +7,7 @@ using ToastNotifications.Messages;
 using SIPSorceryMedia.Windows;
 using System;
 using System.Collections.Generic;
-using System;
+
 using ToastNotifications;
 using ToastNotifications.Lifetime;
 using ToastNotifications.Position;
@@ -36,6 +36,8 @@ using System.Xml;
 using Windows.UI.Notifications;
 using ShinyCall.Services;
 using WPFNotification.Services;
+using System.Media;
+using System.IO;
 
 namespace SystemTrayApp.WPF
 {
@@ -240,6 +242,13 @@ namespace SystemTrayApp.WPF
             this.Dispatcher.Invoke(() =>
             {
                 notifier.ShowInformation(nameCaller);
+                string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Sound\phone.wav");
+                Console.Beep(1000, 5000);
+                SoundPlayer player = new SoundPlayer(path);
+                player.Load();
+                player.Play();
+              
+                
             });
         
 

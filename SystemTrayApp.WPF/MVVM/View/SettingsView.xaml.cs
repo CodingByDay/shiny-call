@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -29,28 +30,45 @@ namespace ShinyCall.MVVM.View
 
         private void InitializeView()
         {
-            server.Text = Properties.Settings.Default.server;
-            phone_number.Text = Properties.Settings.Default.phone;
+
+            password.Text = Services.Services.GetAppSettings("SIPPassword");
+            server.Text = Services.Services.GetAppSettings("SIPServer");
+            display_name.Text = Services.Services.GetAppSettings("SIPUsername");
+            phone_number.Text = Services.Services.GetAppSettings("SIPPhoneNumber");
+
         }
 
         private void SaveData()
         {
             string phone_number_data = phone_number.Text;
             string server_data = server.Text;
+            string password_data = password.Text;
+            string port_data = port.Text;
+            string display_data = display_name.Text;
 
             if (IsValid(phone_number_data, "phone") && IsValid(server_data, "server"))
             {
                 MessageBox.Show("Uspešno spremenjeni podatki.");
-                Properties.Settings.Default.server = server_data;
-                Properties.Settings.Default.phone = phone_number_data;
-                Properties.Settings.Default.Save();
+                Services.Services.AddUpdateAppSettings("SIPUsername", display_data);
+                Services.Services.AddUpdateAppSettings("SIPServer", server_data);
+                Services.Services.AddUpdateAppSettings("SIPPassword", password_data);
+                Services.Services.AddUpdateAppSettings("SIPPhoneNumber", phone_number_data);
+
+                // TODO: RESTART
+                var currentExecutablePath = Process.GetCurrentProcess().MainModule.FileName;
+                Process.Start(currentExecutablePath);
+                Application.Current.Shutdown();
 
             } else
             {
                 MessageBox.Show("Napaka v podatkih.");
             }
         }
-
+        public void Restart()
+        {
+            System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
+            Application.Current.Shutdown();
+        }
         private bool IsValid(string data, string type_data)
         {
             string pattern = string.Empty;
@@ -58,15 +76,18 @@ namespace ShinyCall.MVVM.View
             switch(type_data)
             {
                 case "phone":
-                    pattern = @"^(([0-9]{3})[ \-\/]?([0-9]{3})[ \-\/]?([0-9]{3}))|([0-9]{9})|([\+]?([0-9]{3})[ \-\/]?([0-9]{2})[ \-\/]?([0-9]{3})[ \-\/]?([0-9]{3}))$";
-                    // Create a Regex  
-                    if(Regex.IsMatch(data, pattern)) {
-                        isValid = true;
-                    } else
+
+                    try
                     {
+                        int correct = Int32.Parse(data);
+                        isValid = true;
+                    }
+                    catch (Exception) {
                         isValid = false;
                     }
+
                     break;
+                  
                     
                     
                 case "server":
