@@ -45,18 +45,24 @@
                                 <StackPanel
       Margin="16">
                                     <TextBlock
-        Text="Add a new fruit." />
+        Text="Add a new contact." />
                                    <TextBox
         Margin="0 8 0 0"
-                                       Foreground="white"
+                                  
         HorizontalAlignment="Stretch"
-        x:Name="FruitTextBox" />
+        Name="name_contact" />
+                                    <TextBox
+        Margin="0 8 0 0"
+                                     
+        HorizontalAlignment="Stretch"
+        Name="number_contact" />
                                     <StackPanel
         Orientation="Horizontal"
         HorizontalAlignment="Right">
                                         <Button
           Style="{StaticResource MaterialDesignFlatButton}"
           IsDefault="True"
+          Click="Button_Click"
           Margin="0 8 8 0"
           Content="ACCEPT"
           Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
@@ -94,13 +100,8 @@
           Height="Auto" />
                                     </Grid.RowDefinitions>
                                     <ListBox  Foreground="white"
-        x:Name="FruitListBox">
-                                        <ListBoxItem
-          Content="Apple" />
-                                        <ListBoxItem
-          Content="Banana" />
-                                        <ListBoxItem
-          Content="Pear" />
+        x:Name="list_box_contacts">
+      
                                     </ListBox>
                                     <materialDesign:ColorZone
         Mode="PrimaryMid"
@@ -135,18 +136,22 @@
                                 <StackPanel
       Margin="16">
                                     <TextBlock
-        Text="Add a new fruit." />
+        Text="Add a new link." />
                                     <TextBox
         Margin="0 8 0 0"
-                                       Foreground="white"
         HorizontalAlignment="Stretch"
-        x:Name="FruitTextBox2" />
+        Name="link_obj" />
+                                    <TextBox
+        Margin="0 8 0 0"
+        HorizontalAlignment="Stretch"
+        Name="link_des" />
                                     <StackPanel
         Orientation="Horizontal"
         HorizontalAlignment="Right">
                                         <Button
           Style="{StaticResource MaterialDesignFlatButton}"
           IsDefault="True"
+          Click="Button_Click_1"
           Margin="0 8 8 0"
           Content="ACCEPT"
           Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
@@ -185,13 +190,8 @@
                                     </Grid.RowDefinitions>
                                     <ListBox
                                         Foreground="White"
-        x:Name="FruitListBox2">
-                                        <ListBoxItem
-          Content="Apple" />
-                                        <ListBoxItem
-          Content="Banana" />
-                                        <ListBoxItem
-          Content="Pear" />
+        x:Name="list_box_links">
+      
                                     </ListBox>
                                     <materialDesign:ColorZone
         Mode="PrimaryMid"

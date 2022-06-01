@@ -44,11 +44,28 @@ namespace ShinyCall.Sqlite
             }
 
         }
-        public static void InsertLinks(ContactsModel model)
+
+        internal static void DeleteContact(int phone)
         {
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
-                cnn.Execute("insert into Links(desc) values (@desc)", model);
+                cnn.Execute("delete from Contacts where phone=@phone", new ContactsModel { phone = phone});
+            }
+        }
+
+        public static void InsertLinks(LinksModel model)
+        {
+            using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
+            {
+                cnn.Execute("insert into Links(link, desc) values (@link, @desc)", model);
+            }
+        }
+
+        internal static void DeleteLink(LinksModel link)
+        {
+            using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
+            {
+                cnn.Execute("delete from Links where @link", link);
             }
         }
 
@@ -56,7 +73,7 @@ namespace ShinyCall.Sqlite
         {
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
-                cnn.Execute("insert into Contacts(phone, name) values (@phone, @names)", model);
+                cnn.Execute("insert into Contacts(phone, name) values (@phone, @name)", model);
             }
         }
 
@@ -68,6 +85,17 @@ namespace ShinyCall.Sqlite
             }
         }
 
+
+        public static ContactsModel? GetContact(ContactsModel model)
+        {
+            ContactsModel contact = null;
+            using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
+            {
+                var output = cnn.QuerySingle<ContactsModel>("select * from Contacts where phone=@phone", model);
+                contact = (ContactsModel) output;
+            }
+            return contact;
+        } 
 
         private static string LoadConnectionString(string id = "Default")
         {

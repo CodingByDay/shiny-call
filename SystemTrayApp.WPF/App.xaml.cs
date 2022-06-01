@@ -182,7 +182,6 @@ namespace SystemTrayApp.WPF
         /// </summary>
         private async void ResetToCallStartState(SIPClient sipClient)
         {
-
             if (!String.IsNullOrEmpty(caller))
             {
                 CallModel call = new CallModel();
@@ -198,17 +197,13 @@ namespace SystemTrayApp.WPF
                 call.time = DateTime.Now.ToString();
                 SqliteDataAccess.InsertCallHistory(call);
                 this.InitializeComponent();
-            }
-           
-
+            }           
             if (sipClient == null || sipClient == _sipClients[0])
             {
-
             }
 
             if (sipClient == null || sipClient == _sipClients[1])
             {
-
             }
             isMissedCall = true;
            
@@ -233,12 +228,29 @@ namespace SystemTrayApp.WPF
 
         private bool SIPCallIncoming(SIPRequest sipRequest)
         {
+            string nameCaller;
             isMissedCall = true;
-            var rq = sipRequest;
-            caller = sipRequest.Header.From.FriendlyDescription().Split('@')[0]; 
-            string nameCaller = $"Incoming call from {sipRequest.Header.From.FriendlyDescription()}.";
-            var message = nameCaller;
-
+            ContactsModel? contact = new ContactsModel();
+            SIPRequest rq = sipRequest;
+            caller = sipRequest.Header.From.FriendlyDescription().Split('@')[0];
+            var message = caller.Split(" ");
+            string number = message[message.Length - 1];
+            try
+            {
+                ContactsModel contact_number = new ContactsModel();
+                contact_number.phone = Int32.Parse(number);
+                contact = SqliteDataAccess.GetContact(contact_number);
+            } catch(Exception ex)
+            {
+                var debug = ex;
+            }       
+            if(contact != null)
+            {
+               nameCaller = $"Incoming call from {contact.name + " " + contact.phone}.";
+            } else
+            {
+                nameCaller = $"Incoming call from {sipRequest.Header.From.FriendlyDescription()}.";
+            }
             this.Dispatcher.Invoke(() =>
             {
                 notifier.ShowInformation(nameCaller);
@@ -246,14 +258,8 @@ namespace SystemTrayApp.WPF
                 Console.Beep(1000, 5000);
                 SoundPlayer player = new SoundPlayer(path);
                 player.Load();
-                player.Play();
-              
-                
-            });
-        
-
-           
-
+                player.Play();                             
+            });                  
             if (!_sipClients[0].IsCallActive)
             {
                 _sipClients[0].Accept(sipRequest);           
