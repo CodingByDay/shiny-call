@@ -31,6 +31,7 @@
     <PackageReference Include="Dapper" Version="2.0.123" />
     <PackageReference Include="Expression.Blend.Sdk" Version="1.0.2" />
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.3.0" />
+    <PackageReference Include="MaterialDesignThemes" Version="4.5.0" />
     <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="7.0.0-preview.4.22229.2" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1" />
     <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.0.0" />

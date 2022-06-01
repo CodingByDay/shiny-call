@@ -56,7 +56,7 @@
                              IsChecked="True"
                              Command="{Binding HomeViewCommand}"
                              />
-                <RadioButton Content="Zadnji projekt"
+                <RadioButton Content="Ostalo"
                              Height="30"
                              Foreground="White"
                              FontSize="9"

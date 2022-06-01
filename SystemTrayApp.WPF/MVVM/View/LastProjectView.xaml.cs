@@ -24,5 +24,10 @@ namespace ShinyCall.MVVM.View
         {
             InitializeComponent();
         }
+
+        private void DialogHost_DialogClosing(object sender, MaterialDesignThemes.Wpf.DialogClosingEventArgs eventArgs)
+        {
+
+        }
     }
 }

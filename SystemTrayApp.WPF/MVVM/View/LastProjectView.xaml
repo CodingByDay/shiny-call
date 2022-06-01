@@ -3,11 +3,231 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:ShinyCall.MVVM.View"
+             xmlns:local="clr-namespace:ShinyCall.MVVM.View" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800"
-             Background="#1B1B1B">
-    <Grid>
+             d:DesignHeight="225" d:DesignWidth="800">
+    <StackPanel>
+
+        
+
+        <StackPanel Orientation="Horizontal"
+                    Margin="0,0,0,10">
+
+            <Border Width="800"
+                    Height="225"
+                    
+                  >
+
+                <Border.Background>
+
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,2">
+               
+                    </LinearGradientBrush>
+                </Border.Background>
+
+                <Border.Clip>
+
+                    <RectangleGeometry RadiusX="10"
+                                       RadiusY="10"
+                                       Rect="0,0,800,225"/>
+
+                </Border.Clip>
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Vertical">
+                        <materialDesign:DialogHost
+                            Width="200"
+                            Height="260"
+                            Foreground="White"
+  DialogClosing="DialogHost_DialogClosing"
+  DialogTheme="Inherit">
+                            <materialDesign:DialogHost.DialogContent
+                                >
+                                <StackPanel
+      Margin="16">
+                                    <TextBlock
+        Text="Add a new fruit." />
+                                   <TextBox
+        Margin="0 8 0 0"
+                                       Foreground="white"
+        HorizontalAlignment="Stretch"
+        x:Name="FruitTextBox" />
+                                    <StackPanel
+        Orientation="Horizontal"
+        HorizontalAlignment="Right">
+                                        <Button
+          Style="{StaticResource MaterialDesignFlatButton}"
+          IsDefault="True"
+          Margin="0 8 8 0"
+          Content="ACCEPT"
+          Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
+                                            <Button.CommandParameter>
+                                                <system:Boolean xmlns:system="clr-namespace:System;assembly=mscorlib">
+                                                    True
+                                                </system:Boolean>
+                                            </Button.CommandParameter>
+                                        </Button>
+                                        <Button
+          Style="{StaticResource MaterialDesignFlatButton}"
+          IsCancel="True"
+          Margin="0 8 8 0"
+          Content="CANCEL"
+          Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
+                                            <Button.CommandParameter>
+                                                <system:Boolean xmlns:system="clr-namespace:System;assembly=mscorlib">
+                                                    False
+                                                </system:Boolean>
+                                            </Button.CommandParameter>
+                                        </Button>
+                                    </StackPanel>
+                                </StackPanel>
+                            </materialDesign:DialogHost.DialogContent>
+                            <Border
+    BorderThickness="1"
+    BorderBrush="{DynamicResource PrimaryHueMidBrush}"
+    MinHeight="256"
+    ClipToBounds="True">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition
+          Height="*" />
+                                        <RowDefinition
+          Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <ListBox  Foreground="white"
+        x:Name="FruitListBox">
+                                        <ListBoxItem
+          Content="Apple" />
+                                        <ListBoxItem
+          Content="Banana" />
+                                        <ListBoxItem
+          Content="Pear" />
+                                    </ListBox>
+                                    <materialDesign:ColorZone
+        Mode="PrimaryMid"
+        Grid.Row="1"
+        Effect="{DynamicResource MaterialDesignShadowDepth5}">
+                                        <TextBlock
+          Margin="16"
+          Text="Fruit Bowl" />
+                                    </materialDesign:ColorZone>
+                                    <Button
+        Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+        Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}"
+        VerticalAlignment="Bottom"
+        HorizontalAlignment="Right"
+        Grid.Row="0"
+        Margin="0 0 28 -20"
+        Content="{materialDesign:PackIcon Kind=Plus, Size=22}" />
+                                </Grid>
+                            </Border>
+                        </materialDesign:DialogHost>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Vertical">
+                        <materialDesign:DialogHost
+                            Width="200"
+                            Height="260"
+                            Foreground="White"
+  DialogClosing="DialogHost_DialogClosing"
+  DialogTheme="Inherit">
+                            <materialDesign:DialogHost.DialogContent
+                                >
+                                <StackPanel
+      Margin="16">
+                                    <TextBlock
+        Text="Add a new fruit." />
+                                    <TextBox
+        Margin="0 8 0 0"
+                                       Foreground="white"
+        HorizontalAlignment="Stretch"
+        x:Name="FruitTextBox2" />
+                                    <StackPanel
+        Orientation="Horizontal"
+        HorizontalAlignment="Right">
+                                        <Button
+          Style="{StaticResource MaterialDesignFlatButton}"
+          IsDefault="True"
+          Margin="0 8 8 0"
+          Content="ACCEPT"
+          Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
+                                            <Button.CommandParameter>
+                                                <system:Boolean xmlns:system="clr-namespace:System;assembly=mscorlib">
+                                                    True
+                                                </system:Boolean>
+                                            </Button.CommandParameter>
+                                        </Button>
+                                        <Button
+          Style="{StaticResource MaterialDesignFlatButton}"
+          IsCancel="True"
+          Margin="0 8 8 0"
+          Content="CANCEL"
+          Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
+                                            <Button.CommandParameter>
+                                                <system:Boolean xmlns:system="clr-namespace:System;assembly=mscorlib">
+                                                    False
+                                                </system:Boolean>
+                                            </Button.CommandParameter>
+                                        </Button>
+                                    </StackPanel>
+                                </StackPanel>
+                            </materialDesign:DialogHost.DialogContent>
+                            <Border
+    BorderThickness="1"
+    BorderBrush="{DynamicResource PrimaryHueMidBrush}"
+    MinHeight="256"
+    ClipToBounds="True">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition
+          Height="*" />
+                                        <RowDefinition
+          Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <ListBox
+                                        Foreground="White"
+        x:Name="FruitListBox2">
+                                        <ListBoxItem
+          Content="Apple" />
+                                        <ListBoxItem
+          Content="Banana" />
+                                        <ListBoxItem
+          Content="Pear" />
+                                    </ListBox>
+                                    <materialDesign:ColorZone
+        Mode="PrimaryMid"
+        Grid.Row="1"
+        Effect="{DynamicResource MaterialDesignShadowDepth5}">
+                                        <TextBlock
+          Margin="16"
+          Text="Fruit Bowl" />
+                                    </materialDesign:ColorZone>
+                                    <Button
+        Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+        Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}"
+        VerticalAlignment="Bottom"
+        HorizontalAlignment="Right"
+        Grid.Row="0"
+        Margin="0 0 28 -20"
+        Content="{materialDesign:PackIcon Kind=Plus, Size=22}" />
+                                </Grid>
+                            </Border>
+                        </materialDesign:DialogHost>
+
+
+                    </StackPanel>
+
+                </StackPanel>
+               
+    
+            </Border>
             
-    </Grid>
+            
+            
+            
+          
+        </StackPanel>
+
+
+        
+    </StackPanel>
 </UserControl>

@@ -71,6 +71,7 @@
                        Name="list_view" 
                        HorizontalAlignment="Right" 
                        VerticalAlignment="Top"
+                       Foreground="White"
                        Background="#4e99ff"
                        FontSize="7"
                        Width="200" Height="85"
