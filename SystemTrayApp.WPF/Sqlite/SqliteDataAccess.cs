@@ -69,11 +69,22 @@ namespace ShinyCall.Sqlite
             }
         }
 
+        internal static void DeleteHistory()
+        {
+            using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
+            {
+                cnn.Execute("delete from CallHistory;", new DynamicParameters());
+            }
+
+        }
+
         public static void InsertContacts(ContactsModel model)
         {
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
                 cnn.Execute("insert into Contacts(phone, name) values (@phone, @name)", model);
+       
+                
             }
         }
 
@@ -98,12 +109,14 @@ namespace ShinyCall.Sqlite
         public static ContactsModel? GetContact(ContactsModel model)
         {
             ContactsModel contact = null;
+            
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
                 var output = cnn.QuerySingle<ContactsModel>("select * from Contacts where phone=@phone", model);
                 contact = (ContactsModel) output;
+                return contact;
             }
-            return contact;
+
         } 
 
         private static string LoadConnectionString(string id = "Default")

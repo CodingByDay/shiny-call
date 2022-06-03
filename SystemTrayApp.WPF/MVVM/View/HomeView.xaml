@@ -12,8 +12,20 @@
                    Foreground="White"
                    FontSize="12"
                    HorizontalAlignment="Left"
-                   Margin="0,0,0,0" />
-        
+                   Margin="0,0,0,5" />
+        <Button
+                                    VerticalAlignment="Top"
+                                    Style="{StaticResource MaterialDesignPaperLightButton}"
+                                    Content="Pobriši"
+                                    ToolTip="MaterialDesignRaisedDarkButton with Round Corners"                                                         
+                                    IsEnabled="True"
+                                   HorizontalAlignment="Right"
+                                    Width="100"
+                                    Height="25"
+                                     Margin="0,0,0,5"
+                                    Click="Button_Click"
+                                     ></Button>
+
         <StackPanel Orientation="Horizontal"
                     Margin="0,0,0,10">
 
@@ -108,7 +120,7 @@
                         CornerRadius="10" 
                         Margin="0">
 
-                    <TextBlock Width="130" Height="30" Name="first_call" Background="Transparent" TextAlignment="Center"></TextBlock>
+                    <TextBlock Width="130" Height="30" FontSize="7"  Name="first_call" Background="Transparent" TextAlignment="Center"></TextBlock>
 
 
                 </Border>
@@ -124,7 +136,7 @@
 
 
 
-                    <TextBlock Width="130" Height="30" Name="second_call" Background="Transparent" TextAlignment="Center"></TextBlock>
+                    <TextBlock Width="130" Height="30" Name="second_call" Background="Transparent" FontSize="7"  TextAlignment="Center"></TextBlock>
                 </Border>
 
                 <Border Width="125"
@@ -132,12 +144,13 @@
                         Background="#4eff91"
                         CornerRadius="10">
 
-                    <TextBlock Width="130" Height="30" Name="third_call" Background="Transparent" TextAlignment="Center"></TextBlock>
+                    <TextBlock Width="130" Height="30" Name="third_call" FontSize="7" Background="Transparent" TextAlignment="Center"></TextBlock>
                 </Border>
+               
 
-                
             </StackPanel>
 
         </StackPanel>
     </StackPanel>
+    
 </UserControl>

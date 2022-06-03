@@ -57,7 +57,7 @@ namespace ShinyCall.MVVM.View
                 wNumber.Text = $"Telefonska številka je: {ConfigurationManager.AppSettings["SIPPhoneNumber"]}";
                 wServer.Text = $"Server je: {ConfigurationManager.AppSettings["SIPServer"]}";
                 var history = SqliteDataAccess.LoadCalls();
-
+                history.Reverse();
                 list_view.ItemsSource = GetListFromModels(history);
 
                 var last_calls = history.Skip(Math.Max(0, history.Count() - 3));
@@ -65,14 +65,14 @@ namespace ShinyCall.MVVM.View
                 {
                     try
                     {
-                        CallModel? first = (CallModel)last_calls.ElementAt(0);
+                        CallModel? first = (CallModel)history.ElementAt(0);
                         first_call.Text = ReturnStringOrDefault(first);
 
                     }
                     catch { }
                     try
                     {
-                        CallModel? second = (CallModel)last_calls.ElementAt(1);
+                        CallModel? second = (CallModel)history.ElementAt(1);
                         second_call.Text = ReturnStringOrDefault(second);
 
                     }
@@ -80,7 +80,7 @@ namespace ShinyCall.MVVM.View
 
                     try
                     {
-                        CallModel? third = (CallModel)last_calls.ElementAt(2);
+                        CallModel? third = (CallModel)history.ElementAt(2);
                         third_call.Text = ReturnStringOrDefault(third);
 
                     }
@@ -118,11 +118,22 @@ namespace ShinyCall.MVVM.View
 
         private string ReturnStringOrDefault(CallModel? value)
         {
+        
             if(value!=null)
             {
-                return $"{value.caller}\n{value.status}";
+                DateTime? date = DateTime.Parse(value.time);
+                String content = $"{value.caller}\n{value.status}\n{value.time}\n{date.Value.Date}";
+                return content;
             } 
             return String.Empty;
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            SqliteDataAccess.DeleteHistory();
+            first_call.Text = String.Empty;
+            second_call.Text = String.Empty;
+            third_call.Text = String.Empty; 
         }
     }
 }

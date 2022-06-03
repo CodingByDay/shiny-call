@@ -38,6 +38,7 @@ using ShinyCall.Services;
 using WPFNotification.Services;
 using System.Media;
 using System.IO;
+using ToastNotifications.Core;
 
 namespace SystemTrayApp.WPF
 {
@@ -131,7 +132,7 @@ namespace SystemTrayApp.WPF
                 sipClient.StatusMessage += SipClient_StatusMessage;
                 sipClient.RemotePutOnHold += RemotePutOnHold;
                 sipClient.RemoteTookOffHold += RemoteTookOffHold;
-
+                sipClient.CallEnded += SipClient_CallEnded;
                 _sipClients.Add(sipClient);
             }
 
@@ -156,8 +157,33 @@ namespace SystemTrayApp.WPF
             _sipRegistrationClient.Start();
 
         }
-     
 
+        private void SipClient_CallEnded(SIPClient obj)
+        {
+            if (isMissedCall)
+            {
+                if (!String.IsNullOrEmpty(caller))
+                {
+                    CallModel call = new CallModel();
+
+                    call.caller = caller;
+
+                    if (isMissedCall)
+                    {
+                        call.status = "Missed";
+                    }
+                    else
+                    {
+                        call.status = "Answered";
+                    }
+                    call.time = DateTime.Now.ToString();
+                    SqliteDataAccess.InsertCallHistory(call);
+                    this.InitializeComponent();
+                }
+                isMissedCall = true;
+
+            }
+        }
 
         private void SipClient_StatusMessage(SIPClient arg1, string arg2)
         {
@@ -183,31 +209,16 @@ namespace SystemTrayApp.WPF
         /// </summary>
         private async void ResetToCallStartState(SIPClient sipClient)
         {
-            if (!String.IsNullOrEmpty(caller))
-            {
-                CallModel call = new CallModel();
-                call.caller = caller;
-                if (isMissedCall)
-                {
-                    call.status = "Missed";
-                }
-                else
-                {
-                    call.status = "Answered";
-                }
-                call.time = DateTime.Now.ToString();
-                SqliteDataAccess.InsertCallHistory(call);
-                this.InitializeComponent();
-            }           
+                    
             if (sipClient == null || sipClient == _sipClients[0])
             {
             }
 
             if (sipClient == null || sipClient == _sipClients[1])
             {
+
             }
-            isMissedCall = true;
-           
+            
         }
 
 
@@ -216,12 +227,12 @@ namespace SystemTrayApp.WPF
             cfg.PositionProvider = new WindowPositionProvider(
                 parentWindow: Application.Current.MainWindow,
                 corner: Corner.TopRight,
-                offsetX: 30,
-                offsetY: 30);
+                offsetX: 10,
+                offsetY: 10);
 
             cfg.LifetimeSupervisor = new TimeAndCountBasedLifetimeSupervisor(
-                notificationLifetime: TimeSpan.FromSeconds(5),
-                maximumNotificationCount: MaximumNotificationCount.FromCount(5));
+                notificationLifetime: TimeSpan.FromSeconds(10),
+                maximumNotificationCount: MaximumNotificationCount.FromCount(2));
             cfg.DisplayOptions.Width = 200;
      
             cfg.Dispatcher = Application.Current.Dispatcher;
@@ -230,6 +241,12 @@ namespace SystemTrayApp.WPF
 
         private bool SIPCallIncoming(SIPRequest sipRequest)
         {
+            isMissedCall = true;
+            this.Dispatcher.Invoke(new Action(() =>
+            {
+                MainWindow.WindowState = WindowState.Normal;
+            }));
+
             string nameCaller;
             isMissedCall = true;
             ContactsModel? contact = new ContactsModel();
@@ -246,7 +263,7 @@ namespace SystemTrayApp.WPF
             {
                 var debug = ex;
             }       
-            if(contact != null)
+            if(contact.name != null)
             {
                nameCaller = $"Incoming call from {contact.name + " " + contact.phone}.";
             } else
@@ -255,6 +272,7 @@ namespace SystemTrayApp.WPF
             }
             this.Dispatcher.Invoke(() =>
             {
+        
                 notifier.ShowInformation(nameCaller);
                 string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Sound\phone.wav");
                 Console.Beep(1000, 5000);
