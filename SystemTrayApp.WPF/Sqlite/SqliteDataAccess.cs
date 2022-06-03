@@ -65,7 +65,7 @@ namespace ShinyCall.Sqlite
         {
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
-                cnn.Execute("delete from Links where @link", link);
+                cnn.Execute("delete from Links where desc = @desc", link);
             }
         }
 
@@ -85,7 +85,16 @@ namespace ShinyCall.Sqlite
             }
         }
 
-
+        public static LinksModel? GetLinkBasedOnName(LinksModel model)
+        {
+            LinksModel link = null;
+            using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
+            {
+                var output = cnn.QuerySingle<LinksModel>("select * from Links where desc=@desc", model);
+                link = (LinksModel) output;
+            }
+            return link;
+        }
         public static ContactsModel? GetContact(ContactsModel model)
         {
             ContactsModel contact = null;

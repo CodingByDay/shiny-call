@@ -3,6 +3,7 @@ using ShinyCall.Sqlite;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -30,7 +31,35 @@ namespace ShinyCall.MVVM.View
             var task = Task.Run(async () => await RunForever());
             this.KeyDown += LastProjectView_KeyDown;
 
+            list_box_links.MouseDoubleClick += List_box_links_MouseDoubleClick;
+
         }
+
+        private void List_box_links_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (list_box_links.SelectedItems.Count > 0)
+            {
+                var selected = list_box_links.SelectedItems;
+                foreach (string link in selected)
+                {
+
+                    LinksModel linksModel = new LinksModel();
+                    linksModel.desc = link;
+                    LinksModel lm = SqliteDataAccess.GetLinkBasedOnName(linksModel);
+                    if(lm != null)
+                    {
+                        var psi = new ProcessStartInfo
+                        {
+                            FileName = lm.link,
+                            UseShellExecute = true
+                        };
+                        Process.Start(psi);
+                    }
+                }
+
+            }
+        }
+
 
         private void LastProjectView_KeyDown(object sender, KeyEventArgs e)
         {
@@ -54,7 +83,7 @@ namespace ShinyCall.MVVM.View
                         foreach (string link in selected)
                         {
                             LinksModel lm = new LinksModel();
-                            lm.link = link;
+                            lm.desc = link;
                             SqliteDataAccess.DeleteLink(lm);
                         }
                     }
@@ -87,7 +116,7 @@ namespace ShinyCall.MVVM.View
         {
             foreach (var link in links)
             {
-                yield return link.link;
+                yield return link.desc;
             }
         }
 
