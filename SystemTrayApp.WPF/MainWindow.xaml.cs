@@ -22,6 +22,7 @@ namespace SystemTrayApp.WPF
         public MainWindow()
         {
             InitializeComponent();
+            
         }
 
 

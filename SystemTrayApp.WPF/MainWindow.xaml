@@ -14,6 +14,7 @@
         FontFamily="{DynamicResource MaterialDesignFont}"
         xmlns:local="clr-namespace:SystemTrayApp.WPF"
         mc:Ignorable="d"
+        
         ShowInTaskbar="{Binding ShowInTaskbar}"
 
         Title="Shiny call" Height="200" Width="200">

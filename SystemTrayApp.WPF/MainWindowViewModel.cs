@@ -20,7 +20,6 @@ namespace SystemTrayApp.WPF
             NotifyCommand = new RelayCommand(() => Notify("Welcome to VOIP service!"));
             NotifyIconOpenCommand = new RelayCommand(() => { WindowState = WindowState.Normal; });
             NotifyIconExitCommand = new RelayCommand(() => { Application.Current.Shutdown(); });
-
         }
 
         public ICommand LoadedCommand { get; }
@@ -65,13 +64,6 @@ namespace SystemTrayApp.WPF
             
         }
 
-        /// <summary>
-        ///  Shows the main interface of the application as seen in Windows 11.
-        /// </summary>
-        private void showInterface()
-        {
-
-        }
 
 
         private void Loaded()

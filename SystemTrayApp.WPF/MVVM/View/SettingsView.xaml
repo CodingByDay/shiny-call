@@ -61,12 +61,7 @@
                               Foreground="White"
                             Text="Geslo je:"></TextBlock>
                           
-                                <TextBlock
-                             Foreground="White"
-                                                                    Margin="10, 12, 5, 0"
-
-                             TextWrapping="Wrap"
-                             Text="Port je:"></TextBlock>
+                          
                          
                                 <TextBlock
                                      Foreground="White"
@@ -104,12 +99,7 @@
                             materialDesign:TransitionAssist.DisableTransitions="True" />
                             
                             
-                            <TextBox
-                            Name="port"
-                            Width="150"
-                            Foreground="White"
-                            Margin="10, 5, 5, 0"
-                            materialDesign:TransitionAssist.DisableTransitions="True" />
+                        
                             
                             
                             <TextBox

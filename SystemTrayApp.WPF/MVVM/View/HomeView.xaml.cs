@@ -29,6 +29,7 @@ namespace ShinyCall.MVVM.View
         {
             InitializeComponent();
             InitializeView();
+            
             var task = Task.Run(async () => await RunForever());
         }
 

@@ -43,20 +43,21 @@ namespace ShinyCall.MVVM.View
             string phone_number_data = phone_number.Text;
             string server_data = server.Text;
             string password_data = password.Text;
-            string port_data = port.Text;
             string display_data = display_name.Text;
 
             if (IsValid(phone_number_data, "phone") && IsValid(server_data, "server"))
             {
                 MessageBox.Show("Uspešno spremenjeni podatki.");
+
                 Services.Services.AddUpdateAppSettings("SIPUsername", display_data);
                 Services.Services.AddUpdateAppSettings("SIPServer", server_data);
                 Services.Services.AddUpdateAppSettings("SIPPassword", password_data);
                 Services.Services.AddUpdateAppSettings("SIPPhoneNumber", phone_number_data);
 
-                // TODO: RESTART
+                
                 var currentExecutablePath = Process.GetCurrentProcess().MainModule.FileName;
                 Process.Start(currentExecutablePath);
+
                 Application.Current.Shutdown();
 
             } else
@@ -64,11 +65,7 @@ namespace ShinyCall.MVVM.View
                 MessageBox.Show("Napaka v podatkih.");
             }
         }
-        public void Restart()
-        {
-            System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
-            Application.Current.Shutdown();
-        }
+ 
         private bool IsValid(string data, string type_data)
         {
             string pattern = string.Empty;

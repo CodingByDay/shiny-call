@@ -71,6 +71,18 @@ namespace ShinyCall
             this.WindowState = WindowState.Minimized;
         }
 
-   
+        private void Window_StateChanged(object sender, EventArgs e)
+        {
+            var state = this.WindowState;
+
+            if (state == WindowState.Minimized)
+            {
+                this.Opacity = 0;
+            } else
+            {
+                Opacity = 1;
+            }
+
+        }
     }
 }

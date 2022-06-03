@@ -12,7 +12,8 @@
         ShowInTaskbar="False"
         WindowState="{Binding WindowState}"
         AllowsTransparency="True" 
-
+        
+        StateChanged="Window_StateChanged"
         Deactivated="Window_Deactivated">
     
     

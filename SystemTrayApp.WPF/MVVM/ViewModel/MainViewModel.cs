@@ -20,6 +20,7 @@ namespace ShinyCall.MVVM.ViewModel
         private NotifyIconWrapper.NotifyRequestRecord? _notifyRequest;
         private bool _showInTaskbar;
         private WindowState _windowState;
+        private Visibility _visibility;
         public Core.RelayCommand HomeViewCommand { get; set; }
         public Core.RelayCommand SettingsCommand { get; set; }
         public Core.RelayCommand LastProjectCommand { get; set; }
@@ -85,12 +86,13 @@ namespace ShinyCall.MVVM.ViewModel
             get => _windowState;
             set
             {
+     
                 ShowInTaskbar = true;
                 SetProperty(ref _windowState, value);
                 ShowInTaskbar = value != WindowState.Minimized;
             }
         }
-
+       
         public bool ShowInTaskbar
         {
             get => _showInTaskbar;

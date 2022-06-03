@@ -79,6 +79,7 @@ namespace SystemTrayApp.WPF
         {
             InitializeComponent();
             BusinessLogic();
+            
         }
 
 
@@ -215,13 +216,14 @@ namespace SystemTrayApp.WPF
             cfg.PositionProvider = new WindowPositionProvider(
                 parentWindow: Application.Current.MainWindow,
                 corner: Corner.TopRight,
-                offsetX: 10,
-                offsetY: 10);
+                offsetX: 30,
+                offsetY: 30);
 
             cfg.LifetimeSupervisor = new TimeAndCountBasedLifetimeSupervisor(
-                notificationLifetime: TimeSpan.FromSeconds(3),
+                notificationLifetime: TimeSpan.FromSeconds(5),
                 maximumNotificationCount: MaximumNotificationCount.FromCount(5));
-
+            cfg.DisplayOptions.Width = 200;
+     
             cfg.Dispatcher = Application.Current.Dispatcher;
         });
 
