@@ -28,12 +28,9 @@ namespace ShinyCall.MVVM.View
         public HomeView()
         {
             InitializeComponent();
-            InitializeView();
-            
+            InitializeView();           
             var task = Task.Run(async () => await RunForever());
         }
-
-
 
         public async Task RunForever()
         {
@@ -46,8 +43,6 @@ namespace ShinyCall.MVVM.View
                 }
             });
         }
-
-
         private void UpdateUI()
         {
 

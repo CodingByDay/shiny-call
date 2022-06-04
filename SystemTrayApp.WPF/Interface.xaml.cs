@@ -56,9 +56,10 @@ namespace ShinyCall
             Loaded += ToolWindow_Loaded;
             var theme = Services.Services.GetTheme();
             SetUpLookAndFeel(theme);
+          
             
         }
-
+      
         private void SetUpLookAndFeel(string theme)
         {
          
