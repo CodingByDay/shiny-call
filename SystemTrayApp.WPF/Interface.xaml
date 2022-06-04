@@ -41,6 +41,7 @@
 
 
             <TextBlock Text="Shiny Call"
+                       Name="version"
                        VerticalAlignment="Center"
                        HorizontalAlignment="Left"
                        Foreground="White"

@@ -12,8 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Microsoft.Windows.Themes;
-
-
+using Squirrel;
 
 namespace ShinyCall
 {
@@ -26,6 +25,8 @@ namespace ShinyCall
         // Prep stuff needed to remove close button on window.
         private const int GWL_STYLE = -16;
         private const int WS_SYSMENU = 0x80000;
+        private UpdateManager manager;
+
         [System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
         private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
         [System.Runtime.InteropServices.DllImport("user32.dll")]
@@ -56,9 +57,17 @@ namespace ShinyCall
             Loaded += ToolWindow_Loaded;
             var theme = Services.Services.GetTheme();
             SetUpLookAndFeel(theme);
-          
+            Loaded += Interface_Loaded;
             
         }
+
+        private async void Interface_Loaded(object sender, RoutedEventArgs e)
+        {
+            manager = await UpdateManager
+                 .GitHubUpdateManager("@https://github.com/CodingByDay/shiny-call.git");
+            version.Text = $"Shiny Call {manager.CurrentlyInstalledVersion().ToString()}";
+        }
+
       
         private void SetUpLookAndFeel(string theme)
         {

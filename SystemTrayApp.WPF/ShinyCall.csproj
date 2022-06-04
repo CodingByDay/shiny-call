@@ -46,8 +46,8 @@
     <PackageReference Include="SIPSorceryMedia.Encoders" Version="0.0.10-pre" />
     <PackageReference Include="SIPSorceryMedia.Windows" Version="6.0.3-pre" />
     <PackageReference Include="SQLite" Version="3.13.0" />
-    <PackageReference Include="squirrel.windows" Version="2.0.1" />
-    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.115.5" />
+    <PackageReference Include="squirrel.windows" Version="1.9.0" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.116" />
     <PackageReference Include="System.Management" Version="6.0.0" />
     <PackageReference Include="ToastNotifications" Version="2.5.1" />
     <PackageReference Include="ToastNotifications.Messages" Version="2.5.1" />
@@ -86,5 +86,23 @@
     </Resource>
     <Resource Include="MVVM\View\icon.ico" />
   </ItemGroup>
-
+	<Target Name="AfterBuild">
+		<ItemGroup>
+			<NugetTools Include="$(SolutionDir)packages\NuGet.CommandLine.*\tools\NuGet.exe" />
+			<SquirrelTools Include="$(SolutionDir)packages\squirrel.windows.*\tools\Squirrel.exe" />
+		</ItemGroup>
+		<Copy SourceFiles="@(SquirrelTools->'%(FullPath)')" DestinationFiles="$(OutDir)..\Update.exe" Condition="!Exists('$(OutDir)..\Update.exe')" />
+		<GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
+			<Output TaskParameter="Assemblies" ItemName="assemblyInfo" />
+		</GetAssemblyIdentity>
+		<PropertyGroup>
+			<Version>$([System.Version]::Parse(%(assemblyInfo.Version)).ToString(3))</Version>
+			<NuspecFile>$(SolutionDir)WPFAppFramework\ReleaseSpec.nuspec</NuspecFile>
+		</PropertyGroup>
+		<XmlPeek XmlInputPath="$(NuspecFile)" Query="/package/metadata/id/text()">
+			<Output TaskParameter="Result" ItemName="ID" />
+		</XmlPeek>
+		<Exec Condition=" '$(Configuration)' == 'Release'" Command="@(NugetTools->'%(FullPath)') pack $(NuspecFile) -Version $(Version) -Properties Configuration=Release -OutputDirectory $(SolutionDir)Deployment\GeneratedNugets" />
+		<Exec Condition=" '$(Configuration)' == 'Release'" Command="@(SquirrelTools->'%(FullPath)') --releasify $(SolutionDir)Deployment\GeneratedNugets\@(ID).$(Version).nupkg --releaseDir=$(SolutionDir)Deployment\Releases" />
+	</Target>
 </Project>
