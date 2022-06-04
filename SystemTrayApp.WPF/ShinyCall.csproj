@@ -9,6 +9,9 @@
     <ApplicationIcon>icon.ico</ApplicationIcon>
     <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
     <PlatformTarget>x64</PlatformTarget>
+    <AnalysisLevel>latest-minimum</AnalysisLevel>
+    <AssemblyVersion>1.0.0</AssemblyVersion>
+    <FileVersion>1.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -80,29 +83,13 @@
     <Folder Include="MVVM\Model\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Resource Include="icon.ico">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="MVVM\View\icon.ico" />
-  </ItemGroup>
-	<Target Name="AfterBuild">
-		<ItemGroup>
-			<NugetTools Include="$(SolutionDir)packages\NuGet.CommandLine.*\tools\NuGet.exe" />
-			<SquirrelTools Include="$(SolutionDir)packages\squirrel.windows.*\tools\Squirrel.exe" />
-		</ItemGroup>
-		<Copy SourceFiles="@(SquirrelTools->'%(FullPath)')" DestinationFiles="$(OutDir)..\Update.exe" Condition="!Exists('$(OutDir)..\Update.exe')" />
-		<GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
-			<Output TaskParameter="Assemblies" ItemName="assemblyInfo" />
-		</GetAssemblyIdentity>
-		<PropertyGroup>
-			<Version>$([System.Version]::Parse(%(assemblyInfo.Version)).ToString(3))</Version>
-			<NuspecFile>$(SolutionDir)WPFAppFramework\ReleaseSpec.nuspec</NuspecFile>
-		</PropertyGroup>
-		<XmlPeek XmlInputPath="$(NuspecFile)" Query="/package/metadata/id/text()">
-			<Output TaskParameter="Result" ItemName="ID" />
-		</XmlPeek>
-		<Exec Condition=" '$(Configuration)' == 'Release'" Command="@(NugetTools->'%(FullPath)') pack $(NuspecFile) -Version $(Version) -Properties Configuration=Release -OutputDirectory $(SolutionDir)Deployment\GeneratedNugets" />
-		<Exec Condition=" '$(Configuration)' == 'Release'" Command="@(SquirrelTools->'%(FullPath)') --releasify $(SolutionDir)Deployment\GeneratedNugets\@(ID).$(Version).nupkg --releaseDir=$(SolutionDir)Deployment\Releases" />
-	</Target>
+	<ItemGroup>
+		<Resource Include="icon.ico">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="MVVM\View\icon.ico" />
+	</ItemGroup>
+	
+
+  
 </Project>

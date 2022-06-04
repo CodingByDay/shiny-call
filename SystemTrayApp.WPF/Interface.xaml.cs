@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -26,6 +27,7 @@ namespace ShinyCall
         private const int GWL_STYLE = -16;
         private const int WS_SYSMENU = 0x80000;
         private UpdateManager manager;
+        private UpdateManager updateManager;
 
         [System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
         private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
@@ -58,14 +60,34 @@ namespace ShinyCall
             var theme = Services.Services.GetTheme();
             SetUpLookAndFeel(theme);
             Loaded += Interface_Loaded;
+         
             
         }
 
+        private void AddVersionNumber()
+        {
+           string number = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            version.Text += " " + number;
+        }
+
+
         private async void Interface_Loaded(object sender, RoutedEventArgs e)
         {
-            manager = await UpdateManager
-                 .GitHubUpdateManager("@https://github.com/CodingByDay/shiny-call.git");
-            version.Text = $"Shiny Call {manager.CurrentlyInstalledVersion().ToString()}";
+            try
+            {
+                using (var mgr = await UpdateManager.GitHubUpdateManager("https://github.com/CodingByDay/shiny-call"))
+                {
+                    updateManager = mgr;
+                    var release = await mgr.UpdateApp();
+                }
+            }
+            catch (Exception ex)
+            {
+                string message = ex.Message + Environment.NewLine;
+                if (ex.InnerException != null)
+                    message += ex.InnerException.Message;
+                MessageBox.Show(message);
+            }
         }
 
       

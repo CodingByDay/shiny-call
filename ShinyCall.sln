@@ -5,8 +5,6 @@ VisualStudioVersion = 17.0.32126.317
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShinyCall", "SystemTrayApp.WPF\ShinyCall.csproj", "{7FFF4A8C-0BDC-44FD-9E1B-26AF0188A5E4}"
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Shiny Installer", "Shiny Installer\Shiny Installer.vdproj", "{372FC7C2-BF7B-4AD5-BD61-E62BE9015D15}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,16 +39,6 @@ Global
 		{7FFF4A8C-0BDC-44FD-9E1B-26AF0188A5E4}.Release|x64.Build.0 = Release|Any CPU
 		{7FFF4A8C-0BDC-44FD-9E1B-26AF0188A5E4}.Release|x86.ActiveCfg = Release|Any CPU
 		{7FFF4A8C-0BDC-44FD-9E1B-26AF0188A5E4}.Release|x86.Build.0 = Release|Any CPU
-		{372FC7C2-BF7B-4AD5-BD61-E62BE9015D15}.Debug|Any CPU.ActiveCfg = Debug
-		{372FC7C2-BF7B-4AD5-BD61-E62BE9015D15}.Debug|ARM.ActiveCfg = Debug
-		{372FC7C2-BF7B-4AD5-BD61-E62BE9015D15}.Debug|ARM64.ActiveCfg = Debug
-		{372FC7C2-BF7B-4AD5-BD61-E62BE9015D15}.Debug|x64.ActiveCfg = Debug
-		{372FC7C2-BF7B-4AD5-BD61-E62BE9015D15}.Debug|x86.ActiveCfg = Debug
-		{372FC7C2-BF7B-4AD5-BD61-E62BE9015D15}.Release|Any CPU.ActiveCfg = Release
-		{372FC7C2-BF7B-4AD5-BD61-E62BE9015D15}.Release|ARM.ActiveCfg = Release
-		{372FC7C2-BF7B-4AD5-BD61-E62BE9015D15}.Release|ARM64.ActiveCfg = Release
-		{372FC7C2-BF7B-4AD5-BD61-E62BE9015D15}.Release|x64.ActiveCfg = Release
-		{372FC7C2-BF7B-4AD5-BD61-E62BE9015D15}.Release|x86.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
