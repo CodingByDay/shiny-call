@@ -71,6 +71,7 @@ namespace ShinyCall
                 Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
                 Assembly curAssembly = Assembly.GetExecutingAssembly();
                 string BaseDir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+                string ExeDir = System.IO.Path.Combine(BaseDir, "ShinyCall.exe");
                 key.SetValue(curAssembly.GetName().Name, BaseDir);
             }
             catch
