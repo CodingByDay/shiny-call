@@ -60,14 +60,15 @@ namespace ShinyCall
             var theme = Services.Services.GetTheme();
             SetUpLookAndFeel(theme);
             Loaded += Interface_Loaded;
-         
+            AddVersionNumber();
             
         }
 
         private void AddVersionNumber()
         {
-           string number = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            version.Text += " " + number;
+            // Just updating the version information.
+           string number = Assembly.GetExecutingAssembly().GetName().Version.ToString().Substring(0, 5);
+            version.Text = "v" + number;
         }
 
 
@@ -86,7 +87,7 @@ namespace ShinyCall
                 string message = ex.Message + Environment.NewLine;
                 if (ex.InnerException != null)
                     message += ex.InnerException.Message;
-                MessageBox.Show(message);
+              
             }
         }
 
