@@ -39,30 +39,20 @@ namespace ShinyCall.Services
                 return string.Empty;
             }
         }
+
         public static void AddUpdateAppSettings(string key, string value)
         {
-            try
+            try { 
+            Configuration configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            configuration.AppSettings.Settings[key].Value = value;
+            configuration.Save();
+
+            ConfigurationManager.RefreshSection("appSettings"); 
+            } catch
             {
-                System.Configuration.ExeConfigurationFileMap fileMap = new ExeConfigurationFileMap();
-                fileMap.ExeConfigFilename = AppDomain.CurrentDomain.BaseDirectory + "..\\..\\App.config";
-                Configuration configFile = ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);
-                var settings = configFile.AppSettings.Settings;
-                if (settings[key] == null)
-                {
-                    settings.Add(key, value);
-                }
-                else
-                {
-                    settings[key].Value = value;
-                }
-                configFile.Save(ConfigurationSaveMode.Modified);
-                ConfigurationManager.RefreshSection(configFile.AppSettings.SectionInformation.Name);
-            }
-            catch (ConfigurationErrorsException)
-            {
-                // Logging
             }
         }
+   
 
         // using System.Net.NetworkInformation;
         public static bool IsMachineUp(string hostName)

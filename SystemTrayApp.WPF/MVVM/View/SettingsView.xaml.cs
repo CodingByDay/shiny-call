@@ -1,9 +1,14 @@
-﻿using System;
+﻿using ShinyCall.Sqlite;
+using SIPSorcery.SIP;
+using SIPSorcery.SIP.App;
+using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,6 +19,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ToastNotifications;
+using ToastNotifications.Lifetime;
+using ToastNotifications.Messages;
+using ToastNotifications.Position;
 
 namespace ShinyCall.MVVM.View
 {
@@ -22,6 +31,8 @@ namespace ShinyCall.MVVM.View
     /// </summary>
     public partial class SettingsView : UserControl
     {
+        private bool isSuccess;
+
         public SettingsView()
         {
             InitializeComponent();
@@ -35,6 +46,9 @@ namespace ShinyCall.MVVM.View
             server.Text = Services.Services.GetAppSettings("SIPServer");
             display_name.Text = Services.Services.GetAppSettings("SIPUsername");
             phone_number.Text = Services.Services.GetAppSettings("SIPPhoneNumber");
+            api_data.Text = Services.Services.GetAppSettings("APIaddress");
+            call_data.Text = Services.Services.GetAppSettings("CallData");
+            user_data.Text = Services.Services.GetAppSettings("UserData");
 
         }
 
@@ -44,7 +58,9 @@ namespace ShinyCall.MVVM.View
             string server_data = server.Text;
             string password_data = password.Text;
             string display_data = display_name.Text;
-
+            string api = api_data.Text;
+            string call = call_data.Text;
+            string user = user_data.Text;
             if (IsValid(phone_number_data, "phone") && IsValid(server_data, "server"))
             {
                 MessageBox.Show("Uspešno spremenjeni podatki.");
@@ -53,24 +69,31 @@ namespace ShinyCall.MVVM.View
                 Services.Services.AddUpdateAppSettings("SIPServer", server_data);
                 Services.Services.AddUpdateAppSettings("SIPPassword", password_data);
                 Services.Services.AddUpdateAppSettings("SIPPhoneNumber", phone_number_data);
+                Services.Services.AddUpdateAppSettings("APIaddress", api);
+                Services.Services.AddUpdateAppSettings("CallData", call);
+                Services.Services.AddUpdateAppSettings("UserData", user);
 
-                
+
+                ConfigurationManager.RefreshSection("appSettings");
+
+                SqliteDataAccess.DeleteHistory();
+
                 var currentExecutablePath = Process.GetCurrentProcess().MainModule.FileName;
                 Process.Start(currentExecutablePath);
-
                 Application.Current.Shutdown();
 
-            } else
+            }
+            else
             {
                 MessageBox.Show("Napaka v podatkih.");
             }
         }
- 
+
         private bool IsValid(string data, string type_data)
         {
             string pattern = string.Empty;
             bool isValid = false;
-            switch(type_data)
+            switch (type_data)
             {
                 case "phone":
 
@@ -79,29 +102,31 @@ namespace ShinyCall.MVVM.View
                         int correct = Int32.Parse(data);
                         isValid = true;
                     }
-                    catch (Exception) {
+                    catch (Exception)
+                    {
                         isValid = false;
                     }
 
                     break;
-                  
-                    
-                    
+
+
+
                 case "server":
 
-                        if (Services.Services.IsMachineUp(data))
-                        {
-                            isValid = true;
-                        } else
-                        {
-                            isValid=false;
-                        }
+                    if (Services.Services.IsMachineUp(data))
+                    {
+                        isValid = true;
+                    }
+                    else
+                    {
+                        isValid = false;
+                    }
 
                     break;
 
             }
 
-            return isValid; 
+            return isValid;
         }
 
         private void SaveClick(object sender, RoutedEventArgs e)
@@ -110,6 +135,82 @@ namespace ShinyCall.MVVM.View
 
         }
 
-    
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        Notifier notifier = new Notifier(cfg =>
+        {
+            cfg.PositionProvider = new WindowPositionProvider(
+                parentWindow: Application.Current.MainWindow,
+                corner: Corner.TopRight,
+                offsetX: 10,
+                offsetY: 10);
+
+            cfg.LifetimeSupervisor = new TimeAndCountBasedLifetimeSupervisor(
+                notificationLifetime: TimeSpan.FromSeconds(5),
+                maximumNotificationCount: MaximumNotificationCount.FromCount(0));
+            cfg.DisplayOptions.Width = 200;
+
+            cfg.Dispatcher = Application.Current.Dispatcher;
+        });
+
+
+        private void test_data_Click(object sender, RoutedEventArgs e)
+        {
+            this.Visibility = Visibility.Visible;
+            isSuccess = false;
+            string phone_number_data = phone_number.Text;
+            string server_data = server.Text;
+            string password_data = password.Text;
+            string display_data = display_name.Text;
+
+         
+
+
+            var sipTransport = new SIPTransport();
+            sipTransport.EnableTraceLogs();
+
+            var mwiURI = SIPURI.ParseSIPURIRelaxed($"{phone_number.Text}@{server_data}");
+            int expiry = 5;
+            
+            SIPNotifierClient mwiSubscriber = new SIPNotifierClient(sipTransport, null, SIPEventPackagesEnum.MessageSummary, mwiURI, phone_number_data, null, password_data, expiry, null);
+            mwiSubscriber.SubscriptionSuccessful += MwiSubscriber_SubscriptionSuccessful; ;
+
+            mwiSubscriber.Start();
+
+            Console.WriteLine("press any key to exit...");
+            Console.ReadLine();
+
+            Console.WriteLine("Exiting...");
+
+            // Clean up.
+            mwiSubscriber.Stop();
+            Thread.Sleep(3000);
+            sipTransport.Shutdown();
+            if(!isSuccess )
+            {
+                this.Visibility = Visibility.Visible;
+
+                MessageBox.Show("Nepravilni podatki");
+                this.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                this.Visibility = Visibility.Visible;
+
+                MessageBox.Show("Uspešna prijava");
+                this.Visibility = Visibility.Visible;
+            }
+        }
+
+      
+
+        private void MwiSubscriber_SubscriptionSuccessful(SIPURI obj)
+        {
+            isSuccess = true;
+            
+        }
     }
 }
