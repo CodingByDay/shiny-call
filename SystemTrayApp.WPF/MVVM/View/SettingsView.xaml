@@ -81,12 +81,7 @@
 
                             Text="Uporabnik je:"/>
 
-                            <TextBlock
-                                     Foreground="White"
-                              TextWrapping="Wrap"
-                                                                    Margin="10, 12, 5, 1"
-
-                            Text="Klic je:"/>
+                            
 
                         </StackPanel>
 
@@ -138,12 +133,6 @@
                             Margin="10, 5, 5, 0"
                             materialDesign:TransitionAssist.DisableTransitions="True" />
 
-                            <TextBox
-                            x:Name="call_data"
-                            Width="150"
-                            Foreground="White"
-                            Margin="10, 5, 5, 0"
-                            materialDesign:TransitionAssist.DisableTransitions="True" />
                         </StackPanel>
 
                         <StackPanel Orientation="Vertical">

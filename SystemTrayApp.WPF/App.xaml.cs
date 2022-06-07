@@ -163,24 +163,18 @@ namespace SystemTrayApp.WPF
         {
             if (!string.IsNullOrEmpty(prevID))
             {
-
                 if (id == prevID)
                 {
-
                     prevID = string.Empty;
-
                     return true;
-
                 } else
                 {
                     prevID = id;
                     return false;
                 }
-
             }
             else
             {
-
                 prevID = id;
                 return true;
             }
