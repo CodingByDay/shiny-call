@@ -39,6 +39,7 @@ using WPFNotification.Services;
 using System.Media;
 using System.IO;
 using ToastNotifications.Core;
+using System.Diagnostics;
 
 namespace SystemTrayApp.WPF
 {
@@ -132,6 +133,7 @@ namespace SystemTrayApp.WPF
                 sipClient.StatusMessage += SipClient_StatusMessage;
                 sipClient.RemotePutOnHold += RemotePutOnHold;
                 sipClient.RemoteTookOffHold += RemoteTookOffHold;
+                
                 sipClient.CallEnded += SipClient_CallEnded;
                 _sipClients.Add(sipClient);
             }
@@ -157,9 +159,38 @@ namespace SystemTrayApp.WPF
             _sipRegistrationClient.Start();
 
         }
+        public bool sameCaller(string id)
+        {
+            if (!string.IsNullOrEmpty(prevID))
+            {
+
+                if (id == prevID)
+                {
+
+                    prevID = string.Empty;
+
+                    return true;
+
+                } else
+                {
+                    prevID = id;
+                    return false;
+                }
+
+            }
+            else
+            {
+
+                prevID = id;
+                return true;
+            }
+        }
+
 
         private void SipClient_CallEnded(SIPClient obj)
         {
+          
+        
             if (isMissedCall)
             {
                 if (!String.IsNullOrEmpty(caller))
@@ -171,17 +202,25 @@ namespace SystemTrayApp.WPF
                     if (isMissedCall)
                     {
                         call.status = "Missed";
+                        if(!sameCaller(call.caller)) {
+                            isOkayToOpen = true;
+                        }
                     }
                     else
                     {
                         call.status = "Answered";
+                        isOkayToOpen = true;
                     }
+
                     call.time = DateTime.Now.ToString();
                     SqliteDataAccess.InsertCallHistory(call);
                     this.InitializeComponent();
+                
                 }
-                isMissedCall = true;
 
+            
+
+              
             }
         }
 
@@ -237,11 +276,16 @@ namespace SystemTrayApp.WPF
      
             cfg.Dispatcher = Application.Current.Dispatcher;
         });
-
+        private bool isOkayToOpen = true;
+        private SIPClient prevObj = new SIPClient();
+        private string prevID  =string.Empty;
 
         private bool SIPCallIncoming(SIPRequest sipRequest)
         {
+            var sl = sipRequest.StatusLine;
+            var sd = sipRequest.Body;
             isMissedCall = true;
+
             this.Dispatcher.Invoke(new Action(() =>
             {
                 MainWindow.WindowState = WindowState.Normal;
@@ -259,10 +303,12 @@ namespace SystemTrayApp.WPF
                 ContactsModel contact_number = new ContactsModel();
                 contact_number.phone = Int32.Parse(number);
                 contact = SqliteDataAccess.GetContact(contact_number);
+
             } catch(Exception ex)
             {
                 var debug = ex;
-            }       
+            }    
+            
             if(contact.name != null)
             {
                nameCaller = $"Incoming call from {contact.name + " " + contact.phone}.";
@@ -279,7 +325,22 @@ namespace SystemTrayApp.WPF
                 SoundPlayer player = new SoundPlayer(path);
                 player.Load();
                 player.Play();                             
-            });                  
+            });
+
+
+            if (isOkayToOpen)
+            {
+                string? link = Task.Run(async () => await APIAccess.GetPageAsync(number)).Result;
+
+                var psi = new ProcessStartInfo
+                {
+                    FileName = link,
+                    UseShellExecute = true
+                };
+                Process.Start(psi);
+            }
+            isOkayToOpen = false;
+
             if (!_sipClients[0].IsCallActive)
             {
                 _sipClients[0].Accept(sipRequest);           
@@ -293,9 +354,9 @@ namespace SystemTrayApp.WPF
             else
             {
                 return false;
-            }         
+            }
         }
-
+      
         private async Task AnswerTest()
         {
             if(_sipClients[0]!=null)

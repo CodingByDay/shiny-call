@@ -94,6 +94,10 @@ namespace SIPSorcery.SoftPhone
             m_userAgent.OnDtmfTone += OnDtmfTone;
         }
 
+        public SIPClient()
+        {
+        }
+
         /// <summary>
         /// Places an outgoing SIP call.
         /// </summary>

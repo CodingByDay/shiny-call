@@ -39,13 +39,13 @@
 
                             <TextBlock
                                 TextWrapping="Wrap"
-                                                                    Margin="10, 12, 5, 0"
+                                                                    Margin="10, 12, 5, 1"
 
                                      Foreground="White"
                                 Text="Številka v uporabi je:" />
 
                             <TextBlock
-                                                                    Margin="10, 12, 5, 0"
+                                                                    Margin="10, 12, 5, 1"
 
                                 TextWrapping="Wrap"
                                Text="Strežnik je:"
@@ -53,7 +53,7 @@
 
 
                             <TextBlock
-                                                                    Margin="10, 12, 5, 0"
+                                                                    Margin="10, 12, 5, 1"
 
                               TextWrapping="Wrap"
                               Foreground="White"
@@ -64,27 +64,27 @@
                             <TextBlock
                                      Foreground="White"
                               TextWrapping="Wrap"
-                                                                    Margin="10, 12, 5, 0"
+                                                                    Margin="10, 12, 5, 1"
 
                             Text="Ime je:"/>
                             <TextBlock
                                      Foreground="White"
                               TextWrapping="Wrap"
-                                                                    Margin="10, 12, 5, 0"
+                                                                    Margin="10, 12, 5, 1"
 
                             Text="API naslov je:"/>
 
                             <TextBlock
                                      Foreground="White"
                               TextWrapping="Wrap"
-                                                                    Margin="10, 12, 5, 0"
+                                                                    Margin="10, 12, 5, 1"
 
                             Text="Uporabnik je:"/>
 
                             <TextBlock
                                      Foreground="White"
                               TextWrapping="Wrap"
-                                                                    Margin="10, 12, 5, 0"
+                                                                    Margin="10, 12, 5, 1"
 
                             Text="Klic je:"/>
 
@@ -146,192 +146,40 @@
                             materialDesign:TransitionAssist.DisableTransitions="True" />
                         </StackPanel>
 
-                        <Button
+                        <StackPanel Orientation="Vertical">
+                            <Button
+                                    Style="{StaticResource MaterialDesignPaperLightButton}"
+                                    Content="Testiraj podatke"
+                                    ToolTip="MaterialDesignRaisedDarkButton with Round Corners"                                                         
+                                    IsEnabled="True"
+                                    Margin="30, 50, 5, 5"
+
+                                    x:Name="test_data"                              
+                                    Click="test_data_Click"
+                                     />
+                           
+
+                            <TextBlock
+                                TextWrapping="Wrap"
+                                Margin="10, 12, 5, 0"
+                                Foreground="White"
+                                Name="connStatus"
+                                Text="" />
+                            <Button
                                     VerticalAlignment="Top"
                                     Style="{StaticResource MaterialDesignPaperLightButton}"
                                     Content="Shrani podatke"
                                     ToolTip="MaterialDesignRaisedDarkButton with Round Corners"                                                         
                                     IsEnabled="True"
-                                    Margin="30, 50, 5, 0"
+                                    Margin="30, 50, 5, 5"
                                     MouseUp="SaveClick"
                                     Click="SaveClick"
                                      />
-                        <Button
-                                    Style="{StaticResource MaterialDesignPaperLightButton}"
-                                    Content="Testiraj podatke"
-                                    ToolTip="MaterialDesignRaisedDarkButton with Round Corners"                                                         
-                                    IsEnabled="True"
-                                    x:Name="test_data"                              
-                                    Click="test_data_Click"
-                                     />
+                        </StackPanel>
 
                     </StackPanel>
 
-
-
-                </Grid>
-            </Border>
-
-
-
-
-        </StackPanel>
-        <StackPanel Orientation="Horizontal"
-                    >
-
-            <Border Width="500"
-                Height="325"
-                    
-                  >
-
-
-                <Border.Clip>
-
-                    <RectangleGeometry RadiusX="10"
-                        RadiusY="10"
-                        Rect="0,0,500,500"/>
-
-                </Border.Clip>
-                <Grid>
-
-
-
-
-
-                    <StackPanel Orientation="Horizontal">
-                        <StackPanel Orientation="Vertical">
-
-                            <TextBlock
-                                TextWrapping="Wrap"
-                                Margin="10, 12, 5, 0"
-
-                                Foreground="White"
-                                Text="Številka v uporabi je:" />
-
-                            <TextBlock
-                                Margin="10, 12, 5, 0"
-
-                                TextWrapping="Wrap"
-                                Text="Strežnik je:"
-                                Foreground="White"/>
-
-
-                            <TextBlock
-                                Margin="10, 12, 5, 0"
-
-                                TextWrapping="Wrap"
-                                Foreground="White"
-                                Text="Geslo je:"/>
-
-
-
-                            <TextBlock
-                                Foreground="White"
-                                TextWrapping="Wrap"
-                                Margin="10, 12, 5, 0"
-
-                                Text="Ime je:"/>
-                            <TextBlock
-                                Foreground="White"
-                                TextWrapping="Wrap"
-                                Margin="10, 12, 5, 0"
-
-                                Text="API naslov je:"/>
-
-                            <TextBlock
-                                Foreground="White"
-                                TextWrapping="Wrap"
-                                Margin="10, 12, 5, 0"
-
-                                Text="Uporabnik je:"/>
-
-                            <TextBlock
-                                Foreground="White"
-                                TextWrapping="Wrap"
-                                Margin="10, 12, 5, 0"
-
-                                Text="Klic je:"/>
-
-                        </StackPanel>
-
-                        <StackPanel Orientation="Vertical">
-
-                            <TextBox
-                                x:Name="phone_number1"
-                                Width="150"
-                                Foreground="White"
-                                Margin="10, 5, 5, 0"
-                                materialDesign:TransitionAssist.DisableTransitions="True" />
-
-                            <TextBox
-                                x:Name="server1"
-                                Width="150"
-                                Foreground="White"
-
-                                Margin="10, 5, 5, 0"
-                                materialDesign:TransitionAssist.DisableTransitions="True" />
-
-
-                            <TextBox
-                                x:Name="password1"
-                                Foreground="White"
-                                Width="150"
-                                Margin="10, 5, 5, 0"
-                                materialDesign:TransitionAssist.DisableTransitions="True" />
-
-
-
-
-
-                            <TextBox
-                                x:Name="display_name1"
-                                Width="150"
-                                Foreground="White"
-                                Margin="10, 5, 5, 0"
-                                materialDesign:TransitionAssist.DisableTransitions="True" />
-                            <TextBox
-                                x:Name="api_data1"
-                                Width="150"
-                                Foreground="White"
-                                Margin="10, 5, 5, 0"
-                                materialDesign:TransitionAssist.DisableTransitions="True" />
-                            <TextBox
-                                x:Name="user_data1"
-                                Width="150"
-                                Foreground="White"
-                                Margin="10, 5, 5, 0"
-                                materialDesign:TransitionAssist.DisableTransitions="True" />
-
-                            <TextBox
-                                x:Name="call_data1"
-                                Width="150"
-                                Foreground="White"
-                                Margin="10, 5, 5, 0"
-                                materialDesign:TransitionAssist.DisableTransitions="True" />
-                        </StackPanel>
-                        <Button
-                            Style="{StaticResource MaterialDesignPaperLightButton}"
-                            Content="Testiraj podatke"
-                            ToolTip="MaterialDesignRaisedDarkButton with Round Corners"                                                         
-                            IsEnabled="True"
-                            x:Name="test_data1"                              
-                            Click="test_data_Click"
-                                     />
-
-                        <Button
-                            VerticalAlignment="Top"
-                            Style="{StaticResource MaterialDesignPaperLightButton}"
-                            Content="Shrani podatke"
-                            ToolTip="MaterialDesignRaisedDarkButton with Round Corners"                                                         
-                            IsEnabled="True"
-                            Margin="30, 50, 5, 0"
-                            MouseUp="SaveClick"
-                            Click="SaveClick"
-                                     />
-
-                    </StackPanel>
-
-
+                   
 
                 </Grid>
             </Border>

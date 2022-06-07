@@ -191,17 +191,13 @@ namespace ShinyCall.MVVM.View
             sipTransport.Shutdown();
             if(!isSuccess )
             {
-                this.Visibility = Visibility.Visible;
 
-                MessageBox.Show("Nepravilni podatki");
-                this.Visibility = Visibility.Visible;
+                connStatus.Text = "     Nepravilni podatki.";
             }
             else
             {
-                this.Visibility = Visibility.Visible;
 
-                MessageBox.Show("Uspešna prijava");
-                this.Visibility = Visibility.Visible;
+                connStatus.Text = "     Uspešna prijava.";
             }
         }
 
