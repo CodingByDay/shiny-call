@@ -40,6 +40,7 @@ using System.Media;
 using System.IO;
 using ToastNotifications.Core;
 using System.Diagnostics;
+using ShinyCall;
 
 namespace SystemTrayApp.WPF
 {
@@ -273,17 +274,18 @@ namespace SystemTrayApp.WPF
         private bool isOkayToOpen = true;
         private SIPClient prevObj = new SIPClient();
         private string prevID  =string.Empty;
-
+        public static string Base64Encode(string plainText)
+        {
+            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
+            return System.Convert.ToBase64String(plainTextBytes);
+        }
         private bool SIPCallIncoming(SIPRequest sipRequest)
         {
             var sl = sipRequest.StatusLine;
             var sd = sipRequest.Body;
             isMissedCall = true;
 
-            this.Dispatcher.Invoke(new Action(() =>
-            {
-                MainWindow.WindowState = WindowState.Normal;
-            }));
+         
 
             string nameCaller;
             isMissedCall = true;
@@ -311,8 +313,7 @@ namespace SystemTrayApp.WPF
                 nameCaller = $"Incoming call from {sipRequest.Header.From.FriendlyDescription()}.";
             }
             this.Dispatcher.Invoke(() =>
-            {
-        
+            {        
                 notifier.ShowInformation(nameCaller);
                 string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Sound\phone.wav");
                 Console.Beep(1000, 5000);
@@ -320,18 +321,24 @@ namespace SystemTrayApp.WPF
                 player.Load();
                 player.Play();                             
             });
-
-
             if (isOkayToOpen)
             {
-               // string? link = Task.Run(async () => await APIAccess.GetPageAsync(number)).Result;
+                try
+                {
+                    Application.Current.Dispatcher.Invoke((Action)delegate
+                    {
+                        APIHelper.InitializeClient();
+                        string id = ConfigurationManager.AppSettings["IdData"];
+                        string phone = ConfigurationManager.AppSettings["SIPPhoneNumber"];
+                        Random random = new Random();
+                        var popupt = Task.Run(async () => await APIAccess.GetPageAsync(random.Next(11, 1000000).ToString(), number, id, phone)).Result;
+                        Popup popup = new Popup((int)popupt.Data.Attributes.PopupDuration, popupt.Data.Attributes.Url.ToString(), (int)popupt.Data.Attributes.PopupHeight, (int)popupt.Data.Attributes.PopupWidth);
+                        popup.Show();
+                    });
+                } catch
+                {
 
-                //var psi = new ProcessStartInfo
-                //{
-                //    FileName = link,
-                //    UseShellExecute = true
-                //};
-                //Process.Start(psi);
+                }    
             }
             isOkayToOpen = false;
 

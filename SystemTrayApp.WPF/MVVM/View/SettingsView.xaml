@@ -78,10 +78,9 @@
                                      Foreground="White"
                               TextWrapping="Wrap"
                                                                     Margin="10, 12, 5, 1"
+                              Text="ID uporabnika je:"/>
 
-                            Text="Uporabnik je:"/>
 
-                            
 
                         </StackPanel>
 
@@ -109,11 +108,6 @@
                             Width="150"
                             Margin="10, 5, 5, 0"
                             materialDesign:TransitionAssist.DisableTransitions="True" />
-
-
-
-
-
                             <TextBox
                             x:Name="display_name"
                             Width="150"
@@ -127,7 +121,7 @@
                             Margin="10, 5, 5, 0"
                             materialDesign:TransitionAssist.DisableTransitions="True" />
                             <TextBox
-                            x:Name="user_data"
+                            x:Name="id_data"
                             Width="150"
                             Foreground="White"
                             Margin="10, 5, 5, 0"
@@ -146,8 +140,6 @@
                                     x:Name="test_data"                              
                                     Click="test_data_Click"
                                      />
-                           
-
                             <TextBlock
                                 TextWrapping="Wrap"
                                 Margin="10, 12, 5, 0"
@@ -165,20 +157,9 @@
                                     Click="SaveClick"
                                      />
                         </StackPanel>
-
                     </StackPanel>
-
-                   
-
                 </Grid>
             </Border>
-
-
-
-
         </StackPanel>
-
-
-
     </StackPanel>
 </UserControl>

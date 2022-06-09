@@ -47,7 +47,7 @@ namespace ShinyCall.MVVM.View
             display_name.Text = Services.Services.GetAppSettings("SIPUsername");
             phone_number.Text = Services.Services.GetAppSettings("SIPPhoneNumber");
             api_data.Text = Services.Services.GetAppSettings("APIaddress");
-            user_data.Text = Services.Services.GetAppSettings("UserData");
+            id_data.Text = Services.Services.GetAppSettings("UserData");
 
         }
 
@@ -58,7 +58,7 @@ namespace ShinyCall.MVVM.View
             string password_data = password.Text;
             string display_data = display_name.Text;
             string api = api_data.Text;
-            string user = user_data.Text;
+            string id = id_data.Text;
             if (IsValid(phone_number_data, "phone") && IsValid(server_data, "server"))
             {
                 connStatus.Text = "     Spremenjeno!";
@@ -71,7 +71,7 @@ namespace ShinyCall.MVVM.View
                 Services.Services.AddUpdateAppSettings("SIPPassword", password_data);
                 Services.Services.AddUpdateAppSettings("SIPPhoneNumber", phone_number_data);
                 Services.Services.AddUpdateAppSettings("APIaddress", api);
-                Services.Services.AddUpdateAppSettings("UserData", user);
+                Services.Services.AddUpdateAppSettings("IdData", id);
 
 
                 ConfigurationManager.RefreshSection("appSettings");

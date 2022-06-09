@@ -63,17 +63,10 @@ namespace ShinyCall
             Loaded += Interface_Loaded;
             AddVersionNumber();
             InstallMeOnStartup();
-            testPopup();
+       
         }
 
-        private void testPopup()
-        {
-            APIHelper.InitializeClient();   
-            var popupt = Task.Run(async () => await APIAccess.GetPageAsync("223132312", "%2B584051698572", "1", "75")).Result;
-
-            Popup popup = new Popup(20, "https://wpf-tutorial.com", 1000, 1000);
-            popup.Show();
-        }
+   
 
         private void InstallMeOnStartup()
         {

@@ -32,6 +32,7 @@ namespace ShinyCall
         private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
         public  Popup(int timeot, string url, int height, int width)
         {
+        
             InitializeComponent();
             bSearch.Navigating += BSearch_Navigating;
             Loaded += ToolWindow_Loaded;
