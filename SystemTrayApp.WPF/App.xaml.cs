@@ -324,14 +324,14 @@ namespace SystemTrayApp.WPF
 
             if (isOkayToOpen)
             {
-                string? link = Task.Run(async () => await APIAccess.GetPageAsync(number)).Result;
+               // string? link = Task.Run(async () => await APIAccess.GetPageAsync(number)).Result;
 
-                var psi = new ProcessStartInfo
-                {
-                    FileName = link,
-                    UseShellExecute = true
-                };
-                Process.Start(psi);
+                //var psi = new ProcessStartInfo
+                //{
+                //    FileName = link,
+                //    UseShellExecute = true
+                //};
+                //Process.Start(psi);
             }
             isOkayToOpen = false;
 
