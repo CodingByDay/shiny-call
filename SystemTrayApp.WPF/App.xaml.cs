@@ -331,7 +331,7 @@ namespace SystemTrayApp.WPF
                         string id = ConfigurationManager.AppSettings["IdData"];
                         string phone = ConfigurationManager.AppSettings["SIPPhoneNumber"];
                         Random random = new Random();
-                        var popupt = Task.Run(async () => await APIAccess.GetPageAsync(random.Next(11, 1000000).ToString(), number, id, phone)).Result;
+                        var popupt = Task.Run(async () => await APIAccess.GetPageAsync(sipRequest.Header.CallId, number, id, phone)).Result;
                         Popup popup = new Popup((int)popupt.Data.Attributes.PopupDuration, popupt.Data.Attributes.Url.ToString(), (int)popupt.Data.Attributes.PopupHeight, (int)popupt.Data.Attributes.PopupWidth);
                         popup.Show();
                     });

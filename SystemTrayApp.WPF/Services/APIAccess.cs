@@ -18,10 +18,10 @@ namespace ShinyCall.Services
         public static string call = ConfigurationManager.AppSettings["CallData"];
 
 
-        public static async Task<RoltecResponse> GetPageAsync(string id, string clientPhoneNumber, string userId, string internalPhoneNumber)
+        public static async Task<RoltecResponse> GetPageAsync(string uuid, string clientPhoneNumber, string userId, string internalPhoneNumber)
         {
             string url_final = string.Empty;
-            url_final = url + $"/roltek-api/popup/api/getCallPopUp?id={id}&clientPhoneNumber={clientPhoneNumber}&userID={userId}&internalPhoneNumber={internalPhoneNumber}";
+            url_final = url + $"/roltek-api/popup/api/getCallPopUp?id={uuid}&clientPhoneNumber={clientPhoneNumber}&userID={userId}&internalPhoneNumber={internalPhoneNumber}";
 
             using(HttpResponseMessage response = await APIHelper.ApiClient.GetAsync(url_final))
             {
