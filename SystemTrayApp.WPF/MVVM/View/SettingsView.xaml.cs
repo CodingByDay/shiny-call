@@ -48,7 +48,6 @@ namespace ShinyCall.MVVM.View
             phone_number.Text = Services.Services.GetAppSettings("SIPPhoneNumber");
             api_data.Text = Services.Services.GetAppSettings("APIaddress");
             id_data.Text = Services.Services.GetAppSettings("UserData");
-
         }
 
         private void SaveData()
@@ -59,29 +58,21 @@ namespace ShinyCall.MVVM.View
             string display_data = display_name.Text;
             string api = api_data.Text;
             string id = id_data.Text;
+
             if (IsValid(phone_number_data, "phone") && IsValid(server_data, "server"))
             {
                 connStatus.Text = "     Spremenjeno!";
-          
-
-
-
                 Services.Services.AddUpdateAppSettings("SIPUsername", display_data);
                 Services.Services.AddUpdateAppSettings("SIPServer", server_data);
                 Services.Services.AddUpdateAppSettings("SIPPassword", password_data);
                 Services.Services.AddUpdateAppSettings("SIPPhoneNumber", phone_number_data);
                 Services.Services.AddUpdateAppSettings("APIaddress", api);
                 Services.Services.AddUpdateAppSettings("IdData", id);
-
-
                 ConfigurationManager.RefreshSection("appSettings");
-
                 SqliteDataAccess.DeleteHistory();
-
                 var currentExecutablePath = Process.GetCurrentProcess().MainModule.FileName;
                 Process.Start(currentExecutablePath);
                 Application.Current.Shutdown();
-
             }
             else
             {
@@ -156,6 +147,8 @@ namespace ShinyCall.MVVM.View
             cfg.Dispatcher = Application.Current.Dispatcher;
         });
 
+        private SIPTransport sipTransport;
+        private SIPNotifierClient mwiSubscriber;
 
         private void test_data_Click(object sender, RoutedEventArgs e)
         {
@@ -165,48 +158,41 @@ namespace ShinyCall.MVVM.View
             string server_data = server.Text;
             string password_data = password.Text;
             string display_data = display_name.Text;
+            sipTransport = new SIPTransport();
+            sipTransport.EnableTraceLogs();
+            var mwiURI = SIPURI.ParseSIPURIRelaxed($"{phone_number.Text}@{server_data}");
+            int expiry = 5;          
+            mwiSubscriber = new SIPNotifierClient(sipTransport, null, SIPEventPackagesEnum.MessageSummary, mwiURI, phone_number_data, null, password_data, expiry, null);
+            mwiSubscriber.Start();
+            this.Dispatcher.Invoke(() =>
+            {
+                connStatus.Text = "     Povezovanje...";
+            });
+            
+            mwiSubscriber.SubscriptionSuccessful += MwiSubscriber_SubscriptionSuccessful; ;
+            mwiSubscriber.SubscriptionFailed += MwiSubscriber_SubscriptionFailed;
 
          
-
-
-            var sipTransport = new SIPTransport();
-            sipTransport.EnableTraceLogs();
-
-            var mwiURI = SIPURI.ParseSIPURIRelaxed($"{phone_number.Text}@{server_data}");
-            int expiry = 5;
-            
-            SIPNotifierClient mwiSubscriber = new SIPNotifierClient(sipTransport, null, SIPEventPackagesEnum.MessageSummary, mwiURI, phone_number_data, null, password_data, expiry, null);
-            mwiSubscriber.SubscriptionSuccessful += MwiSubscriber_SubscriptionSuccessful; ;
-
-            mwiSubscriber.Start();
-
-            Console.WriteLine("press any key to exit...");
-            Console.ReadLine();
-
-            Console.WriteLine("Exiting...");
-
-            // Clean up.
-            mwiSubscriber.Stop();
-            Thread.Sleep(3000);
-            sipTransport.Shutdown();
-            if(!isSuccess )
-            {
-
-                connStatus.Text = "     Nepravilni podatki.";
-            }
-            else
-            {
-
-                connStatus.Text = "     Uspešna prijava.";
-            }
         }
 
-      
+        private void MwiSubscriber_SubscriptionFailed(SIPURI arg1, SIPResponseStatusCodesEnum arg2, string arg3)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                connStatus.Text = "     Neuspešna prijava.";
+            });
+            sipTransport.Shutdown();
+            mwiSubscriber.Stop();
+        }
 
         private void MwiSubscriber_SubscriptionSuccessful(SIPURI obj)
         {
-            isSuccess = true;
-            
+            this.Dispatcher.Invoke(() =>
+            {
+                connStatus.Text = "     Uspešna prijava.";
+            });
+            sipTransport.Shutdown();
+            mwiSubscriber.Stop();
         }
     }
 }
