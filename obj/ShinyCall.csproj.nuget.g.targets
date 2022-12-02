@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <Import Project="$(NuGetPackageRoot)sqlitepclraw.lib.e_sqlite3\2.1.0\buildTransitive\net6.0\SQLitePCLRaw.lib.e_sqlite3.targets" Condition="Exists('$(NuGetPackageRoot)sqlitepclraw.lib.e_sqlite3\2.1.0\buildTransitive\net6.0\SQLitePCLRaw.lib.e_sqlite3.targets')" />
+    <Import Project="$(NuGetPackageRoot)microsoft.extensions.logging.abstractions\6.0.1\build\Microsoft.Extensions.Logging.Abstractions.targets" Condition="Exists('$(NuGetPackageRoot)microsoft.extensions.logging.abstractions\6.0.1\build\Microsoft.Extensions.Logging.Abstractions.targets')" />
+    <Import Project="$(NuGetPackageRoot)sipsorcerymedia.encoders\0.0.10-pre\build\SIPSorceryMedia.Encoders.targets" Condition="Exists('$(NuGetPackageRoot)sipsorcerymedia.encoders\0.0.10-pre\build\SIPSorceryMedia.Encoders.targets')" />
+    <Import Project="$(NuGetPackageRoot)sipsorcerymedia\3.0.2\build\SIPSorceryMedia.targets" Condition="Exists('$(NuGetPackageRoot)sipsorcerymedia\3.0.2\build\SIPSorceryMedia.targets')" />
+    <Import Project="$(NuGetPackageRoot)microsoft.web.webview2\1.0.1340-prerelease\build\Microsoft.Web.WebView2.targets" Condition="Exists('$(NuGetPackageRoot)microsoft.web.webview2\1.0.1340-prerelease\build\Microsoft.Web.WebView2.targets')" />
+    <Import Project="$(NuGetPackageRoot)materialdesignthemes\4.5.0\build\MaterialDesignThemes.targets" Condition="Exists('$(NuGetPackageRoot)materialdesignthemes\4.5.0\build\MaterialDesignThemes.targets')" />
+  </ImportGroup>
+</Project>
