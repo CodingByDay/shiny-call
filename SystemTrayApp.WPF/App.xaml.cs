@@ -144,6 +144,7 @@ namespace SystemTrayApp.WPF
 
 
         private bool alreadyShown = false;
+        private Popup popup;
 
         private async void BusinessLogic()
         {
@@ -188,6 +189,8 @@ namespace SystemTrayApp.WPF
 
             void Monitoring_NewState(object sender, NewStateEvent e)
             {
+
+            
                 try {
                     string state = e.State;
                     string callerID = e.CallerId;
@@ -215,17 +218,22 @@ namespace SystemTrayApp.WPF
                                                 string id = ConfigurationManager.AppSettings["UserData"];
                                                 string phone = ConfigurationManager.AppSettings["SIPPhoneNumber"];
                                                 var popupt = Task.Run(async () => await APIAccess.GetPageAsync(id_unique.ToString(), calleridnumber, id, phone)).Result;
-                                                Popup popup = new Popup((int)popupt.Data.Attributes.PopupDuration, popupt.Data.Attributes.Url.ToString(), (int)popupt.Data.Attributes.PopupHeight, (int)popupt.Data.Attributes.PopupWidth);
+                                                Analytics.TrackEvent($"Popup: {(int)popupt.Data.Attributes.PopupDuration}, {popupt.Data.Attributes.Url.ToString()}, {(int)popupt.Data.Attributes.PopupHeight}, {(int)popupt.Data.Attributes.PopupWidth}");
+
+                                                popup = new Popup((int)popupt.Data.Attributes.PopupDuration, popupt.Data.Attributes.Url.ToString(), (int)popupt.Data.Attributes.PopupHeight, (int)popupt.Data.Attributes.PopupWidth);
                                                 popup.Show();
                                                 popup.Activate();
                                                 popup.Topmost = true;
                                                 alreadyShown = true;
+                                           
                                             });
                                         }
                                     }
                                     catch (Exception ex)
                                     {
                                         Crashes.TrackError(ex);
+                                        Analytics.TrackEvent("Error line : " + 236.ToString());
+
                                     }
                                 });
                             }
@@ -266,6 +274,8 @@ namespace SystemTrayApp.WPF
                 } catch(Exception ex)
                 {
                     Crashes.TrackError(ex);
+                    Analytics.TrackEvent("Error line : " + 278.ToString());
+
                 }
             } 
         }
@@ -292,6 +302,8 @@ namespace SystemTrayApp.WPF
             }
             catch(Exception ex) {
                 Crashes.TrackError(ex);
+                Analytics.TrackEvent("Error line : " + 306.ToString());
+
             }
         }
     }
