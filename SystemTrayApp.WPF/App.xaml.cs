@@ -137,7 +137,6 @@ namespace SystemTrayApp.WPF
             manager.NewState += new NewStateEventHandler(Monitoring_NewState);
             manager.Transfer += Manager_Transfer;
             manager.Dial += Manager_Dial;
-            manager.Hangup += Manager_Hangup;
             manager.NewChannel += Manager_NewChannel;
 
          
@@ -175,24 +174,7 @@ namespace SystemTrayApp.WPF
 
    
 
-        private void Manager_Hangup(object sender, HangupEvent e)
-        {
-           if(e.Channel.Contains("SIP") && e.Channel.Contains(phone) && callerChannel.state == "Transfer")
-            {
-                if (callerChannel.answered )
-                {
-                    EndCall();
-                    callerChannel = new CallerChannel();
-
-                }
-                else
-                {
-                    Missed();
-                    callerChannel = new CallerChannel();
-
-                }
-            } 
-        }
+   
 
         private void Manager_Dial(object sender, DialEvent e)
         {
@@ -203,7 +185,7 @@ namespace SystemTrayApp.WPF
                 {
                     Ringing();
                 }
-            } else if (callerChannel.number != string.Empty && e.Channel.Contains(callerChannel.number) && e.SubEvent == "End" && e.DialStatus == "ANSWER") {
+            } else if (callerChannel.number != string.Empty && e.Channel.Contains(callerChannel.number) && e.SubEvent == "End" && e.DialStatus == "ANSWER" && callerChannel.state != "Transfer") {
 
                 if (callerChannel.answered)
                 {
@@ -218,6 +200,38 @@ namespace SystemTrayApp.WPF
 
                 }
 
+            }
+            else if (callerChannel.number != string.Empty && e.Channel.Contains(callerChannel.number) && e.SubEvent == "End" && e.DialStatus == "CANCEL" && callerChannel.state != "Transfer")
+            {
+
+                if (callerChannel.answered)
+                {
+                    EndCall();
+                    callerChannel = new CallerChannel();
+
+                }
+                else
+                {
+                    Missed();
+                    callerChannel = new CallerChannel();
+
+                }
+
+            }
+            else if (callerChannel.number != string.Empty && e.Channel.Contains(callerChannel.number) && e.SubEvent == "End" && e.DialStatus == "ANSWER" && callerChannel.state == "Transfer")
+            {
+                if (callerChannel.answered)
+                {
+                    EndCall();
+                    callerChannel = new CallerChannel();
+
+                }
+                else
+                {
+                    Missed();
+                    callerChannel = new CallerChannel();
+
+                }
             }
                                   
             else if (callerChannel.number == string.Empty && e.CallerIdNum != null && e.CallerIdNum != string.Empty && e.Destination.Contains(phone))
@@ -326,7 +340,6 @@ namespace SystemTrayApp.WPF
                             popup = new Popup((int)5, "http://google.com", (int)500, (int)500);
                             popup.Show();
                             popup.Activate();
-
                             popup.Closed += Popup_Closed;
                             popup.Topmost = true;
                             callerChannel.shownAlready = true;
