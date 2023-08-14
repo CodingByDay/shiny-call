@@ -32,6 +32,7 @@ namespace ShinyCall
         private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
         public  Popup(int timeout, string url, int height, int width)
         {
+            
             InitializeComponent();      
             Loaded += ToolWindow_Loaded;
             if (url == "")
@@ -48,7 +49,7 @@ namespace ShinyCall
             }
             else
             {
-                Task.Delay(new TimeSpan(0, 0, timeout)).ContinueWith(o => { CancelForm(); });
+               Task.Delay(new TimeSpan(0, 0, timeout)).ContinueWith(o => { CancelForm(); });
                 Uri uri = new Uri(url);
                 bSearch.Source = uri;
                 this.Height = height;
@@ -56,13 +57,23 @@ namespace ShinyCall
             }
             this.Activate();
         }
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            bSearch.Dispose();
+            Loaded -= ToolWindow_Loaded;
+           
+        }
 
         private void CancelForm()
         {
             this.Dispatcher.Invoke(() =>
             {
-                this.Hide();
-                this.Close();
+         
+                Close();
+              
+              // collect finalized objects
+
             });
     
         }

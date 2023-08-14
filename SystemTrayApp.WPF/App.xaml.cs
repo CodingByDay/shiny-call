@@ -13,26 +13,13 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
-using System.Media;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media.Imaging;
 using ToastNotifications;
 using ToastNotifications.Core;
 using ToastNotifications.Lifetime;
-using ToastNotifications.Messages;
 using ToastNotifications.Position;
-
-
-using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
-using TinyJson;
-using AppCenterExtensions;
-using System.Linq.Expressions;
-using System.Linq;
-using System.ComponentModel;
-using AsterNET.FastAGI.Command;
 
 namespace SystemTrayApp.WPF
 {
@@ -204,9 +191,20 @@ namespace SystemTrayApp.WPF
                     callerChannel = new CallerChannel();
 
                 }
-            } else if (e.Channel.Contains("SIP") && e.Channel.Contains(phone) && callerChannel.state != "Transfer" && callerChannel.selfChannel != null)
+            } 
+        }
+
+        private void Manager_Dial(object sender, DialEvent e)
+        {
+
+            if (e.SubEvent == "Begin" && e.DialString == phone && e.Destination.Contains("SIP") && e.Destination.Contains(phone))
             {
-                // Blind transfer
+                if (!callerChannel.shownAlready)
+                {
+                    Ringing();
+                }
+            } else if (callerChannel.number != string.Empty && e.Channel.Contains(callerChannel.number) && e.SubEvent == "End" && e.DialStatus == "ANSWER") {
+
                 if (callerChannel.answered)
                 {
                     EndCall();
@@ -219,18 +217,10 @@ namespace SystemTrayApp.WPF
                     callerChannel = new CallerChannel();
 
                 }
-            }
-        }
 
-        private void Manager_Dial(object sender, DialEvent e)
-        {
-            if (e.SubEvent == "Begin" && e.DialString == phone && e.Destination.Contains("SIP") && e.Destination.Contains(phone))
-            {
-                if (!callerChannel.shownAlready)
-                {
-                    Ringing();
-                }
-            } else if (callerChannel.number == string.Empty && e.CallerIdNum != null && e.CallerIdNum != string.Empty && e.Destination.Contains(phone))
+            }
+                                  
+            else if (callerChannel.number == string.Empty && e.CallerIdNum != null && e.CallerIdNum != string.Empty && e.Destination.Contains(phone))
             {
                 callerChannel.number = e.CallerIdNum;
                 callerChannel.name = e.CallerIdName;
@@ -336,6 +326,8 @@ namespace SystemTrayApp.WPF
                             popup = new Popup((int)5, "http://google.com", (int)500, (int)500);
                             popup.Show();
                             popup.Activate();
+
+                            popup.Closed += Popup_Closed;
                             popup.Topmost = true;
                             callerChannel.shownAlready = true;
 
@@ -347,6 +339,11 @@ namespace SystemTrayApp.WPF
                     Analytics.TrackEvent("Error line : " + 236.ToString());
                 }
             });
+        }
+
+        private void Popup_Closed(object? sender, EventArgs e)
+        {
+            popup = null;
         }
     }
         public class CallInformation
