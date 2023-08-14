@@ -12,6 +12,7 @@
     <AnalysisLevel>latest-minimum</AnalysisLevel>
     <AssemblyVersion>3.0.3</AssemblyVersion>
     <FileVersion>1.0.0</FileVersion>
+    <ErrorReport>none</ErrorReport>
   </PropertyGroup>
 
   <ItemGroup>

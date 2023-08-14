@@ -30,6 +30,9 @@ using Microsoft.AppCenter.Crashes;
 using TinyJson;
 using AppCenterExtensions;
 using System.Linq.Expressions;
+using System.Linq;
+using System.ComponentModel;
+using AsterNET.FastAGI.Command;
 
 namespace SystemTrayApp.WPF
 {
@@ -38,52 +41,32 @@ namespace SystemTrayApp.WPF
     /// </summary>
     public partial class App : Application
     {
-        private NotifyIconWrapper.NotifyRequestRecord? _notifyRequest;
         private MainViewModel context = new MainViewModel();
         private const int SIP_CLIENT_COUNT = 2;                             // The number of SIP clients (simultaneous calls) that the UI can handle.
         private const int ZINDEX_TOP = 10;
         private const int REGISTRATION_EXPIRY = 180;
         private string caller = string.Empty;
-        private bool isMissedCall = true;
+
         private string m_sipUsername = SIPSoftPhoneState.SIPUsername;
         private string m_sipPassword = SIPSoftPhoneState.SIPPassword;
         private string m_sipServer = SIPSoftPhoneState.SIPServer;
         private bool m_useAudioScope = SIPSoftPhoneState.UseAudioScope;
-
-        private SIPTransportManager _sipTransportManager;
-        private List<SIPClient> _sipClients;
-        private SoftphoneSTUNClient _stunClient;                    // STUN client to periodically check the public IP address.
-        private SIPRegistrationUserAgent _sipRegistrationClient;    // Can be used to register with an external SIP provider if incoming calls are required.
-
 #pragma warning disable CS0649
-        private WriteableBitmap _client0WriteableBitmap;
-        private WriteableBitmap _client1WriteableBitmap;
         private string? phone;
-        private string? currentPhone;
         private ManagerConnection manager;
-        private CallModel caller_model;
+        private CallModel caller_model = new CallModel();
         private Guid id_unique = Guid.NewGuid();
         private Guid commited_guid = Guid.NewGuid();
-        private bool answered = false;
-        private string calleridname;
-        private string calleridnumber;
-        private string nameCaller;
-
         public bool MainBoleanValue { get; private set; }
 #pragma warning restore CS0649
-        //private AudioScope.AudioScope _audioScope0;
-        //private AudioScope.AudioScopeOpenGL _audioScopeGL0;
-        //private AudioScope.AudioScope _audioScope1;
-        //private AudioScope.AudioScopeOpenGL _audioScopeGL1;
-        //private AudioScope.AudioScope _onHoldAudioScope;
-        //private AudioScope.AudioScopeOpenGL _onHoldAudioScopeGL;
+
 
         public App()
         {
             Crashes.SetEnabledAsync(true);
             Microsoft.AppCenter.AppCenter.Start("557b220c-9c91-4bc3-909f-90eefae8a75a", typeof(Analytics), typeof(Crashes));
             Crashes.NotifyUserConfirmation(UserConfirmation.AlwaysSend); /* Always send crash reports */ /*https://appcenter.ms/apps */
-            Analytics.SetEnabledAsync(true);      
+            Analytics.SetEnabledAsync(true);
             Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
             DispatcherUnhandledException += App_DispatcherUnhandledException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
@@ -91,10 +74,10 @@ namespace SystemTrayApp.WPF
             string path = System.IO.Path.Combine(startupPath, "ShinyCall.exe");
             CreateShortcut(Environment.ProcessPath);
             InitializeComponent();
-            BusinessLogic();     
+            BusinessLogic();
         }
 
- 
+
 
         private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
@@ -145,6 +128,10 @@ namespace SystemTrayApp.WPF
 
         private bool alreadyShown = false;
         private Popup popup;
+        private Dictionary<string, string> attributes;
+        private string receiver;
+        private string callerNumber;
+        private CallInformation callInformation;
 
         private async void BusinessLogic()
         {
@@ -153,21 +140,20 @@ namespace SystemTrayApp.WPF
                 ShowCloseButton = false, // set the option to show or hide notification close button
             };
             string reload = Services.GetAppSettings("reload");
-            //string SIPUsername = ConfigurationManager.AppSettings["SIPUsername"];
-            //string SIPPassword = ConfigurationManager.AppSettings["SIPPassword"];
-            //string SIPServer = ConfigurationManager.AppSettings["SIPServer"];
-            //string port = ConfigurationManager.AppSettings["SIPport"];
             phone = ConfigurationManager.AppSettings["SIPPhoneNumber"];
             string password = Services.GetAppSettings("SIPPassword");
             string server = Services.GetAppSettings("SIPServer");
             string username = Services.GetAppSettings("SIPUsername");
             string port = Services.GetAppSettings("SIPport");
-            //id_data.Text = Services.GetAppSettings("UserData");
             manager = new ManagerConnection(server, Int32.Parse(port), username, password);
-            //manager = new ManagerConnection(SIPServer, Int32.Parse(port), SIPUsername, SIPPassword);
             manager.UnhandledEvent += new ManagerEventHandler(manager_Events);
             manager.NewState += new NewStateEventHandler(Monitoring_NewState);
+            manager.Transfer += Manager_Transfer;
+            manager.Dial += Manager_Dial;
             manager.Hangup += Manager_Hangup;
+            manager.NewChannel += Manager_NewChannel;
+
+         
             try
             {
                 manager.Login();
@@ -188,123 +174,188 @@ namespace SystemTrayApp.WPF
             }
 
             void Monitoring_NewState(object sender, NewStateEvent e)
-            {
-
-            
-                try {
-                    string state = e.State;
-                    string callerID = e.CallerId;
-                    if ((state == "Ringing") | (e.ChannelState == "5"))
-                    {
-                        string calleridname_inner = e.CallerIdName;
-                        string calleridnumber_inner = e.CallerIdNum;
-                        currentPhone = calleridnumber_inner;
-                        string channelstatedesc = e.ChannelStateDesc;
-                        var datereceived = e.DateReceived;
-                        if (!MainBoleanValue)
-                        {
-                            if (phone != String.Empty && phone == calleridnumber_inner)
-                            {
-                                MainBoleanValue = true;
-                                this.Dispatcher.Invoke(() =>
-                                {
-                                    try
-                                    {
-                                        if (!alreadyShown)
-                                        {
-                                            Application.Current.Dispatcher.Invoke((Action)delegate
-                                            {
-                                                APIHelper.InitializeClient();
-                                                string id = ConfigurationManager.AppSettings["UserData"];
-                                                string phone = ConfigurationManager.AppSettings["SIPPhoneNumber"];
-                                                var popupt = Task.Run(async () => await APIAccess.GetPageAsync(id_unique.ToString(), calleridnumber, id, phone)).Result;
-                                                Analytics.TrackEvent($"Popup: {(int)popupt.Data.Attributes.PopupDuration}, {popupt.Data.Attributes.Url.ToString()}, {(int)popupt.Data.Attributes.PopupHeight}, {(int)popupt.Data.Attributes.PopupWidth}");
-
-                                                popup = new Popup((int)popupt.Data.Attributes.PopupDuration, popupt.Data.Attributes.Url.ToString(), (int)popupt.Data.Attributes.PopupHeight, (int)popupt.Data.Attributes.PopupWidth);
-                                                popup.Show();
-                                                popup.Activate();
-                                                popup.Topmost = true;
-                                                alreadyShown = true;
-                                           
-                                            });
-                                        }
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        Crashes.TrackError(ex);
-                                        Analytics.TrackEvent("Error line : " + 236.ToString());
-
-                                    }
-                                });
-                            }
-                            else
-                            {
-                                MainBoleanValue = false;
-                                return;
-                            }
-                        }
-                        else
-                        {
-                            Analytics.TrackEvent($"Call incoming from - {calleridnumber}, time: {DateTime.Now}");
-                        }
-                    }
-                    else if ((state == "Ring") | (e.ChannelState == "4"))
-                    {
-                        calleridname = e.CallerIdName;
-                        calleridnumber = e.CallerIdNum;
-                        caller_model = new CallModel();
-                        caller_model.caller = calleridnumber;
-                        id_unique = Guid.NewGuid();
-                        MainBoleanValue = false;
-                    }
-                    else if (e.ChannelState == "6" && MainBoleanValue && commited_guid != id_unique)
-                    {
-                        if (currentPhone == phone)
-                        {
-                            caller_model.status = "Answered";
-                            caller_model.time = DateTime.Now.ToString();
-                            caller_model.caller = $"{calleridnumber}-{calleridname}";
-                            SqliteDataAccess.InsertCallHistory(caller_model);
-                            commited_guid = id_unique;
-                            answered = true;
-                            MainBoleanValue = false;
-                            Analytics.TrackEvent($"Answerered call from - {calleridnumber}, time: {DateTime.Now}");
-                        }
-                    }
-                } catch(Exception ex)
+            {             
+                if (e.Channel.Contains("SIP") && e.Channel.Contains(phone)&&e.ChannelStateDesc == "Up" && callerChannel.state == "Transfer")
                 {
-                    Crashes.TrackError(ex);
-                    Analytics.TrackEvent("Error line : " + 278.ToString());
-
+                    callerChannel.answered = true;
+                } else if (callerChannel.selfChannel!=null && e.Channel.Contains(phone) && e.ChannelStateDesc == "Up")
+                {
+                    callerChannel.answered = true;
                 }
-            } 
+
+            }
         }
+
+   
 
         private void Manager_Hangup(object sender, HangupEvent e)
         {
-            try
+           if(e.Channel.Contains("SIP") && e.Channel.Contains(phone) && callerChannel.state == "Transfer")
             {
-                if (commited_guid != id_unique && MainBoleanValue)
+                if (callerChannel.answered )
                 {
-                    if (currentPhone == phone)
-                    {
-                        caller_model.status = "Missed";
-                        caller_model.time = DateTime.Now.ToString();
-                        caller_model.caller = $"{calleridnumber}-{calleridname}";
-                        SqliteDataAccess.InsertCallHistory(caller_model);
-                        commited_guid = id_unique;
-                        alreadyShown = false;
-                        MainBoleanValue = false;
-                        Analytics.TrackEvent($"Missed call from - {calleridnumber}, time: {DateTime.Now}");
+                    EndCall();
+                    callerChannel = new CallerChannel();
 
-                    }
+                }
+                else
+                {
+                    Missed();
+                    callerChannel = new CallerChannel();
+
+                }
+            } else if (e.Channel.Contains("SIP") && e.Channel.Contains(phone) && callerChannel.state != "Transfer" && callerChannel.selfChannel != null)
+            {
+                // Blind transfer
+                if (callerChannel.answered)
+                {
+                    EndCall();
+                    callerChannel = new CallerChannel();
+
+                }
+                else
+                {
+                    Missed();
+                    callerChannel = new CallerChannel();
+
                 }
             }
-            catch(Exception ex) {
-                Crashes.TrackError(ex);
-                Analytics.TrackEvent("Error line : " + 306.ToString());
+        }
 
+        private void Manager_Dial(object sender, DialEvent e)
+        {
+            if (e.SubEvent == "Begin" && e.DialString == phone && e.Destination.Contains("SIP") && e.Destination.Contains(phone))
+            {
+                if (!callerChannel.shownAlready)
+                {
+                    Ringing();
+                }
+            } else if (callerChannel.number == string.Empty && e.CallerIdNum != null && e.CallerIdNum != string.Empty && e.Destination.Contains(phone))
+            {
+                callerChannel.number = e.CallerIdNum;
+                callerChannel.name = e.CallerIdName;
+            }
+            else if (e.SubEvent == "End" && e.DialStatus == "ANSWER" && e.UniqueId == callerChannel.id)
+            {
+                EndCall();
+                callerChannel = new CallerChannel();
+            }
+            else if (e.SubEvent == "End" && e.DialStatus == "CANCEL" && e.UniqueId == callerChannel.id)
+            {
+                Missed();
+                callerChannel = new CallerChannel();
+            }
+        
+
+
+        }
+
+        private void EndCall()
+        {
+            caller_model.status = "Answered";
+            caller_model.time = DateTime.Now.ToString();
+            caller_model.caller = $"{callerChannel.number}-{callerChannel.name}";
+            SqliteDataAccess.InsertCallHistory(caller_model);
+        }
+
+        List<NewChannelEvent> currentChannels = new List<NewChannelEvent>();
+        private void Missed()
+        {
+            caller_model.status = "Missed";
+            caller_model.time = DateTime.Now.ToString();
+            caller_model.caller = $"{callerChannel.number}-{callerChannel.name}";
+            SqliteDataAccess.InsertCallHistory(caller_model);
+
+        }
+        private void Manager_Transfer(object sender, TransferEvent e)
+        {
+            if (e.TransferExten == phone)
+            {
+
+                callerChannel.state = "Transfer";
+                callerChannel.number = string.Empty;
+                callerChannel.name = string.Empty;
+                callerChannel.id = string.Empty;
+                callerChannel.transferEvent = e;
+                
             }
         }
+        List<string> strings = new List<string>();
+        private string i;
+        public CallerChannel callerChannel = new CallerChannel();
+        private void Manager_NewChannel(object sender, NewChannelEvent e)
+        {
+
+       
+            if (e.Channel.Contains("SIP") && e.Attributes.Count >= 2 && e.Attributes["exten"].Contains(phone))
+            {
+                callerChannel.state = e.ChannelStateDesc;
+                callerChannel.number = e.CallerIdNum;
+                callerChannel.name = e.CallerIdName;
+                callerChannel.id = e.UniqueId;
+            } 
+            if (e.Channel.Contains(phone) && e.Channel.Contains("SIP"))
+            {
+                callerChannel.selfChannel = e;
+            }
+
+         
+          
+
+
+          
+
+        }
+        public class CallerChannel
+        {
+            public string name { get; set; } = string.Empty;
+            public string number { get; set; } = string.Empty;
+            public string id { get; set; } = string.Empty; 
+            public string state { get; set; } = string.Empty;
+
+            public NewChannelEvent callerChannel { get; set; }
+            public bool answered { get; set; } = false;
+            public NewChannelEvent selfChannel { get; set;  }
+            public bool shownAlready { get; set; } = false;
+
+            public TransferEvent transferEvent { get; set; }
+
+        }
+        private void Ringing()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                try
+                {
+                        Application.Current.Dispatcher.Invoke((Action)delegate
+                        {
+                            APIHelper.InitializeClient();
+                            string id = ConfigurationManager.AppSettings["UserData"];
+                            string phone = ConfigurationManager.AppSettings["SIPPhoneNumber"];
+                            // var popupt = Task.Run(async () => await APIAccess.GetPageAsync(id_unique.ToString(), callerChannel.number, id, phone)).Result;
+                            popup = new Popup((int)5, "http://google.com", (int)500, (int)500);
+                            popup.Show();
+                            popup.Activate();
+                            popup.Topmost = true;
+                            callerChannel.shownAlready = true;
+
+                        });                   
+                }
+                catch (Exception ex)
+                {
+                    Crashes.TrackError(ex);
+                    Analytics.TrackEvent("Error line : " + 236.ToString());
+                }
+            });
+        }
     }
+        public class CallInformation
+        {
+            public string caller { get; set; }
+            public string receiver { get; set; }
+            public string callerName { get; set; }
+            public string receiverName { get; set; }
+            public string channelStateDescription { get; set; }
+            public DateTime dateReceived { get; set; }
+        }
 }
