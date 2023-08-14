@@ -104,7 +104,7 @@ namespace ShinyCall
             {
                
 
-                using (var mgr = await UpdateManager.GitHubUpdateManager("https://github.com/CodingByDay/shiny-call"))
+                using (var mgr = await UpdateManager.GitHubUpdateManager("https://github.com/CodingByDay/Shiny-Call-Production"))
                 {
 
                     updateManager = mgr;

@@ -20,6 +20,7 @@ using ToastNotifications.Lifetime;
 using ToastNotifications.Position;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
+using System.Threading.Tasks;
 
 namespace SystemTrayApp.WPF
 {
@@ -336,8 +337,8 @@ namespace SystemTrayApp.WPF
                             APIHelper.InitializeClient();
                             string id = ConfigurationManager.AppSettings["UserData"];
                             string phone = ConfigurationManager.AppSettings["SIPPhoneNumber"];
-                            // var popupt = Task.Run(async () => await APIAccess.GetPageAsync(id_unique.ToString(), callerChannel.number, id, phone)).Result;
-                            popup = new Popup((int)5, "http://google.com", (int)500, (int)500);
+                            var popupt = Task.Run(async () => await APIAccess.GetPageAsync(id_unique.ToString(), callerChannel.number, id, phone)).Result;
+                            popup = new Popup((int)popupt.Data.Attributes.PopupDuration, popupt.Data.Attributes.Url.ToString(), (int)popupt.Data.Attributes.PopupHeight, (int)popupt.Data.Attributes.PopupWidth);
                             popup.Show();
                             popup.Activate();
                             popup.Closed += Popup_Closed;
