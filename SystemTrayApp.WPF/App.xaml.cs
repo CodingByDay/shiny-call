@@ -186,7 +186,30 @@ namespace SystemTrayApp.WPF
                 {
                     Ringing();
                 }
-            } else if (callerChannel.number != string.Empty && e.Channel.Contains(callerChannel.number) && e.SubEvent == "End" && e.DialStatus == "ANSWER" && callerChannel.state != "Transfer") {
+            }
+            else if (callerChannel.number != string.Empty && e.Channel.Contains(callerChannel.number) && e.SubEvent == "End" && e.DialStatus == "NOANSWER")
+            {
+
+              
+                    Missed();
+                    callerChannel = new CallerChannel();
+
+
+
+            }
+            else if (callerChannel.number != string.Empty && e.Channel.Contains(phone) && e.SubEvent == "End" && e.DialStatus == "BUSY")
+            {
+
+
+                Missed();
+                callerChannel = new CallerChannel();
+
+                
+
+
+
+            }
+            else if (callerChannel.number != string.Empty && e.Channel.Contains(callerChannel.number) && e.SubEvent == "End" && e.DialStatus == "ANSWER" && callerChannel.state != "Transfer") {
 
                 if (callerChannel.answered)
                 {
@@ -298,6 +321,7 @@ namespace SystemTrayApp.WPF
                 callerChannel.number = e.CallerIdNum;
                 callerChannel.name = e.CallerIdName;
                 callerChannel.id = e.UniqueId;
+                callerChannel.shownAlready = false;
             } 
             if (e.Channel.Contains(phone) && e.Channel.Contains("SIP"))
             {
@@ -338,8 +362,7 @@ namespace SystemTrayApp.WPF
                             string id = ConfigurationManager.AppSettings["UserData"];
                             string phone = ConfigurationManager.AppSettings["SIPPhoneNumber"];
                             var popupt = Task.Run(async () => await APIAccess.GetPageAsync(id_unique.ToString(), callerChannel.number, id, phone)).Result;
-                            popup = new Popup((int)popupt.Data.Attributes.PopupDuration, popupt.Data.Attributes.Url.ToString(), (int)popupt.Data.Attributes.PopupHeight, (int)popupt.Data.Attributes.PopupWidth);
-                            popup.Show();
+                            popup = new Popup((int)5, popupt.Data.Attributes.Url.ToString(), (int)popupt.Data.Attributes.PopupHeight, (int)popupt.Data.Attributes.PopupWidth); popup.Show();
                             popup.Activate();
                             popup.Closed += Popup_Closed;
                             popup.Topmost = true;
